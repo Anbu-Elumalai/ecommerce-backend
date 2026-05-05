@@ -4,32 +4,65 @@ import {
   IsEnum,
   IsOptional,
   IsMongoId,
-  ValidateIf
+  IsBoolean,
+  IsNumber,
+  IsArray
 } from "class-validator";
-import { CategoryType, CategoryStatus } from "../../entity/Category";
+import { CategoryStatus } from "../../entity/Category";
 
 export class CreateCategoryDto {
   @IsString()
   @IsNotEmpty()
     name!: string;
 
-  @IsEnum(CategoryType)
-  @IsNotEmpty()
-    type!: CategoryType;
+  @IsString()
+  @IsOptional()
+    slug?: string;
 
-  @ValidateIf(o => o.type === CategoryType.SUB)
-  @IsMongoId()
-  @IsNotEmpty()
-    parentCategory?: string;
+  @IsString()
+  @IsOptional()
+    description?: string;
 
-  @ValidateIf(o => o.type === CategoryType.REFERRAL)
   @IsMongoId()
-  @IsNotEmpty()
-    referralParent?: string;
+  @IsOptional()
+    parentId?: string | null;
+
+  @IsString()
+  @IsOptional()
+    image?: string;
+
+  @IsString()
+  @IsOptional()
+    banner?: string;
 
   @IsEnum(CategoryStatus)
   @IsOptional()
     status?: CategoryStatus = CategoryStatus.ACTIVE;
+
+  @IsBoolean()
+  @IsOptional()
+    showInMenu?: boolean = true;
+
+  @IsBoolean()
+  @IsOptional()
+    isFeatured?: boolean = false;
+
+  @IsNumber()
+  @IsOptional()
+    sortOrder?: number = 0;
+
+  @IsString()
+  @IsOptional()
+    metaTitle?: string;
+
+  @IsString()
+  @IsOptional()
+    metaDescription?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+    metaKeywords?: string[];
 }
 
 export class UpdateCategoryDto {
@@ -37,15 +70,52 @@ export class UpdateCategoryDto {
   @IsOptional()
     name?: string;
 
+  @IsString()
+  @IsOptional()
+    slug?: string;
+
+  @IsString()
+  @IsOptional()
+    description?: string;
+
+  @IsMongoId()
+  @IsOptional()
+    parentId?: string | null;
+
+  @IsString()
+  @IsOptional()
+    image?: string;
+
+  @IsString()
+  @IsOptional()
+    banner?: string;
+
   @IsEnum(CategoryStatus)
   @IsOptional()
     status?: CategoryStatus;
 
-  @IsMongoId()
+  @IsBoolean()
   @IsOptional()
-    parentCategory?: string;
+    showInMenu?: boolean;
 
-  @IsMongoId()
+  @IsBoolean()
   @IsOptional()
-    referralParent?: string;
+    isFeatured?: boolean;
+
+  @IsNumber()
+  @IsOptional()
+    sortOrder?: number;
+
+  @IsString()
+  @IsOptional()
+    metaTitle?: string;
+
+  @IsString()
+  @IsOptional()
+    metaDescription?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+    metaKeywords?: string[];
 }

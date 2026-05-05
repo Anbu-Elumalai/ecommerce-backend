@@ -8,39 +8,47 @@ import {
 } from "typeorm";
 import { ObjectId } from "mongodb";
 
-export enum CategoryType {
-  MAIN = "MAIN",
-  SUB = "SUB",
-  REFERRAL = "REFERRAL"
-}
-
 export enum CategoryStatus {
   ACTIVE = "active",
   INACTIVE = "inactive"
 }
 
 @Entity("categories")
-@Index(["name", "type"], { unique: true })
+@Index(["slug"], { unique: true })
+@Index(["parentId"])
 export class Category {
   @ObjectIdColumn()
     _id!: ObjectId;
 
+  // 🔹 Basic Info
   @Column()
     name!: string;
 
-  @Column({
-    type: "enum",
-    enum: CategoryType,
-    default: CategoryType.MAIN
-  })
-    type!: CategoryType;
+  @Column()
+    slug!: string;
 
   @Column({ nullable: true })
-    parentCategory?: ObjectId; // For SUB categories
+    description?: string;
+
+  // 🔹 Hierarchy
+  @Column({ nullable: true })
+    parentId?: ObjectId | null;
+
+  @Column({ default: 0 })
+    level!: number;
+
+  @Column({ default: "" })
+    path!: string;
+  // Example: "home-living/kitchen"
+
+  // 🔹 Media
+  @Column({ nullable: true })
+    image?: string;
 
   @Column({ nullable: true })
-    referralParent?: ObjectId; // For REFERRAL categories
+    banner?: string;
 
+  // 🔹 Settings
   @Column({
     type: "enum",
     enum: CategoryStatus,
@@ -48,9 +56,34 @@ export class Category {
   })
     status!: CategoryStatus;
 
+  @Column({ default: true })
+    showInMenu!: boolean;
+
+  @Column({ default: false })
+    isFeatured!: boolean;
+
+  @Column({ default: 0 })
+    sortOrder!: number;
+
+  // 🔹 SEO
+  @Column({ nullable: true })
+    metaTitle?: string;
+
+  @Column({ nullable: true })
+    metaDescription?: string;
+
+  @Column("simple-array", { nullable: true })
+    metaKeywords?: string[];
+
+  // 🔹 Analytics
+  @Column({ default: 0 })
+    productCount!: number;
+
+  // 🔹 Soft Delete
   @Column({ default: false })
     isDeleted!: boolean;
 
+  // 🔹 Timestamps
   @CreateDateColumn()
     createdAt!: Date;
 
