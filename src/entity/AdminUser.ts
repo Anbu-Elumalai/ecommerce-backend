@@ -9,8 +9,8 @@ import {
 import { ObjectId } from "mongodb";
 
 @Entity("adminusers")
-@Index(["phoneNumber"], { unique: true }) // 🔥 fast login
-@Index(["email"], { unique: true })
+@Index("phone_idx", ["phoneNumber"], { unique: true, partialFilterExpression: { isDeleted: false } } as any)
+@Index("email_idx", ["email"], { unique: true, partialFilterExpression: { isDeleted: false } } as any)
 export class AdminUser {
 
   @ObjectIdColumn()

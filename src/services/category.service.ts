@@ -255,4 +255,83 @@ export class CategoryService {
       skippedCount: ids.length - deletableIds.length
     };
   }
+
+  /**
+   * Get categories as a tree structure
+   */
+  async getTree() {
+    const categories = await this.categoryRepo.find({
+      where: { isDeleted: false },
+      order: { sortOrder: "ASC" }
+    });
+
+    const rootNodes: any[] = [];
+    const childrenMap = new Map<string, any[]>();
+
+    // Map categories and build relations
+    const categoryMap = new Map<string, any>();
+    for (const cat of categories) {
+      const node = {
+        _id: cat._id.toString(),
+        name: cat.name,
+        slug: cat.slug,
+        parentId: cat.parentId ? cat.parentId.toString() : null,
+        level: cat.level,
+        path: cat.path,
+        status: cat.status,
+        productCount: cat.productCount || 0,
+        children: []
+      };
+      categoryMap.set(node._id, node);
+      
+      const parentIdStr = node.parentId;
+      if (parentIdStr) {
+        if (!childrenMap.has(parentIdStr)) {
+          childrenMap.set(parentIdStr, []);
+        }
+        childrenMap.get(parentIdStr)!.push(node);
+      } else {
+        rootNodes.push(node);
+      }
+    }
+
+    // Recursively attach children
+    for (const [id, node] of categoryMap.entries()) {
+      if (childrenMap.has(id)) {
+        node.children = childrenMap.get(id);
+      }
+    }
+
+    return rootNodes;
+  }
+
+  /**
+   * Update category status
+   */
+  async updateStatus(id: string, status: any) {
+    if (!ObjectId.isValid(id)) throw new BadRequestError("Invalid Category ID");
+    const category = await this.categoryRepo.findOneBy({
+      _id: new ObjectId(id),
+      isDeleted: false
+    });
+
+    if (!category) throw new NotFoundError("Category not found");
+    category.status = status;
+    return await this.categoryRepo.save(category);
+  }
+
+  /**
+   * Update category sort order
+   */
+  async updateSortOrder(id: string, sortOrder: number) {
+    if (!ObjectId.isValid(id)) throw new BadRequestError("Invalid Category ID");
+    const category = await this.categoryRepo.findOneBy({
+      _id: new ObjectId(id),
+      isDeleted: false
+    });
+
+    if (!category) throw new NotFoundError("Category not found");
+    category.sortOrder = sortOrder;
+    return await this.categoryRepo.save(category);
+  }
 }

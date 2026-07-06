@@ -27,18 +27,22 @@
  *           type: string
  *           example: "5678"
  */
-import { IsString, IsNotEmpty, IsPhoneNumber, Length } from "class-validator";
+import { IsString, IsNotEmpty, Length, Matches } from "class-validator";
 
 export class LoginDto {
-    @IsPhoneNumber("IN")
+    @IsString()
     @IsNotEmpty()
+    @Length(10, 10, { message: "Phone number must be exactly 10 digits" })
+    @Matches(/^\d{10}$/, { message: "Phone number must contain only digits" })
       phoneNumber!: string;
 
-    @Length(4, 4)
+    @Length(4, 4, { message: "PIN must be exactly 4 digits" })
+    @Matches(/^\d{4}$/, { message: "PIN must contain only digits" })
     @IsString()
     @IsNotEmpty()
       pin!: string;
 }
+
 
 export class ChangePinDto {
     @Length(4, 4)

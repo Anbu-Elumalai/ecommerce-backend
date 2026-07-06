@@ -1,14 +1,18 @@
 import { Server as SocketServer } from "socket.io";
 import { Server as HttpServer } from "http";
 import jwt from "jsonwebtoken";
+import { env } from "../config/env.config";
 
 let io: SocketServer;
 
 export const initSocket = (server: HttpServer) => {
+  const allowedOrigins = env.ALLOWED_ORIGINS === "*" ? "*" : env.ALLOWED_ORIGINS.split(",");
+
   io = new SocketServer(server, {
     cors: {
-      origin: "*",
-      methods: ["GET", "POST"]
+      origin: allowedOrigins,
+      methods: ["GET", "POST"],
+      credentials: true
     }
   });
 
@@ -22,8 +26,15 @@ export const initSocket = (server: HttpServer) => {
 
     try {
       const cleanToken = token.replace("Bearer ", "");
-      const decoded = jwt.verify(cleanToken, process.env.JWT_SECRET as string) as any;
-      socket.data.userId = decoded.userId;
+      const decoded = jwt.verify(cleanToken, env.JWT_SECRET) as any;
+
+      // ✅ FIX: Use decoded.id (populated by JWT login payload)
+      socket.data.userId = decoded.id || decoded.userId;
+
+      if (!socket.data.userId) {
+        return next(new Error("Authentication error: Invalid payload"));
+      }
+
       next();
     } catch {
       return next(new Error("Authentication error: Invalid token"));

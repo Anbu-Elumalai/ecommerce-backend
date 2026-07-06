@@ -9,7 +9,9 @@ import { AdminUser } from "../entity/AdminUser";
 import { ObjectId } from "mongodb";
 import { UserToken } from "../entity/UserToken";
 import { Role } from "../entity/Role.Permission";
-import { handleErrorResponse } from "../utils";
+import handleErrorResponse from "../utils/commonFunction";
+import { env } from "../config/env.config";
+import { Admin } from "../entity/Admin";
 
 export interface AuthPayload {
   userId: string;
@@ -20,7 +22,7 @@ export interface AuthPayload {
 }
 
 export class AuthMiddleware implements ExpressMiddlewareInterface {
-  async use(req: Request, _res: Response, next: NextFunction): Promise<void> {
+  async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const authHeader = req.headers.authorization;
 
@@ -37,7 +39,8 @@ export class AuthMiddleware implements ExpressMiddlewareInterface {
       if (!token) {
         throw new UnauthorizedError("Token missing");
       }
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+
+      const decoded = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
       const decodedId = decoded.id || decoded.userId;
 
       if (!decoded || typeof decoded !== "object" || !decodedId) {
@@ -47,30 +50,34 @@ export class AuthMiddleware implements ExpressMiddlewareInterface {
 
       // Check if user is still active in database
       const userId = decodedId;
-      let user: any = null;
 
-      user = await AppDataSource.getMongoRepository(AdminUser).findOneBy({
+      const user = await AppDataSource.getMongoRepository(AdminUser).findOneBy({
+        _id: new ObjectId(userId),
+        isDeleted: false
+      });
+      const admin = await AppDataSource.getMongoRepository(Admin).findOneBy({
         _id: new ObjectId(userId),
         isDeleted: false
       });
 
-      if (!user) {
+      if (!user && !admin) {
         throw new UnauthorizedError("User not found or account deleted");
       }
 
-      if (!user.isActive) {
+      if (!user?.isActive && !admin?.isActive) {
         throw new UnauthorizedError("Account is inactive. Please contact admin.");
       }
 
       // Load Role with permissions
       let role = null;
-      if (user.roleId) {
+      if (user?.roleId) {
         role = await AppDataSource.getMongoRepository(Role).findOneBy({
           _id: new ObjectId(user.roleId),
           isDeleted: false
         });
       }
 
+      // Check active token record
       const activeTokenRecord = await AppDataSource.getMongoRepository(UserToken).findOneBy({
         userId: new ObjectId(userId),
         token: token
@@ -83,19 +90,23 @@ export class AuthMiddleware implements ExpressMiddlewareInterface {
       (req as any).user = {
         ...decoded,
         userId: decodedId,
-        id: decodedId,
-        companyId: user.companyId?.toString() || decoded.companyId,
-        roleId: user.roleId?.toString() || decoded.roleId,
+        companyName: user?.companyName || admin?.companyName,
+        roleId: user?.roleId?.toString() || admin?.roleId || decoded.roleId,
         role: role // attach full role object with permissions
-      };
+      }
+      if (admin) {
+        (req as any).admin = {
+          ...decoded,
+          userId: decodedId,
+          companyName: admin?.companyName,
+          roleId: admin?.roleId?.toString() || decoded.roleId,
+          role: role
+        };
+      }
 
       next();
     } catch (error: any) {
-      if (error instanceof UnauthorizedError) {
-        handleErrorResponse(error, _res);
-      }
-      handleErrorResponse(error, _res);
-
+      handleErrorResponse(error, res);
     }
   }
 }
