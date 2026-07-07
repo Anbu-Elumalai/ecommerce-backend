@@ -6,10 +6,11 @@ import {
   IsBoolean,
   IsArray,
   ValidateNested,
-  Matches
+  Matches,
+  ValidateIf
 } from "class-validator";
 import { Type } from "class-transformer";
-import { AttributeDisplayType, AttributeStatus } from "../../entity/Attribute";
+import { AttributeDisplayType, AttributeStatus, AttributeGroup, AttributeType } from "../../entity/Attribute";
 
 export class AttributeValueDto {
   @IsString()
@@ -21,10 +22,19 @@ export class AttributeValueDto {
     value?: string;
 
   @IsOptional()
+  @ValidateIf((o) => typeof o.color === "string" && o.color.trim() !== "")
   @Matches(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, {
     message: "Invalid HEX color code"
   })
     color?: string;
+
+  @IsString()
+  @IsOptional()
+    image?: string;
+
+  @IsBoolean()
+  @IsOptional()
+    isActive?: boolean = true;
 
   @IsOptional()
     sortOrder?: number = 0;
@@ -38,6 +48,18 @@ export class CreateAttributeDto {
   @IsString()
   @IsOptional()
     slug?: string;
+
+  @IsString()
+  @IsOptional()
+    description?: string;
+
+  @IsEnum(AttributeGroup)
+  @IsOptional()
+    group?: AttributeGroup = AttributeGroup.GENERAL;
+
+  @IsEnum(AttributeType)
+  @IsOptional()
+    type?: AttributeType = AttributeType.SELECT;
 
   @IsEnum(AttributeDisplayType)
   @IsNotEmpty()
@@ -65,6 +87,18 @@ export class CreateAttributeDto {
   @IsOptional()
     isVisible?: boolean = true;
 
+  @IsBoolean()
+  @IsOptional()
+    isFilterable?: boolean = true;
+
+  @IsBoolean()
+  @IsOptional()
+    showOnProductPage?: boolean = true;
+
+  @IsBoolean()
+  @IsOptional()
+    isActive?: boolean = true;
+
   @IsOptional()
     sortOrder?: number = 0;
 }
@@ -77,6 +111,18 @@ export class UpdateAttributeDto {
   @IsString()
   @IsOptional()
     slug?: string;
+
+  @IsString()
+  @IsOptional()
+    description?: string;
+
+  @IsEnum(AttributeGroup)
+  @IsOptional()
+    group?: AttributeGroup;
+
+  @IsEnum(AttributeType)
+  @IsOptional()
+    type?: AttributeType;
 
   @IsEnum(AttributeDisplayType)
   @IsOptional()
@@ -103,6 +149,18 @@ export class UpdateAttributeDto {
   @IsBoolean()
   @IsOptional()
     isVisible?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+    isFilterable?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+    showOnProductPage?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+    isActive?: boolean;
 
   @IsOptional()
     sortOrder?: number;

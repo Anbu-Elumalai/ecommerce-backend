@@ -43,9 +43,9 @@ export class AuthMiddleware implements ExpressMiddlewareInterface {
       const decoded = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
       const decodedId = decoded.id || decoded.userId;
 
-      if (!decoded || typeof decoded !== "object" || !decodedId) {
-        console.error("Auth Error: Missing ID in payload", decoded);
-        throw new Error("Invalid token payload");
+      if (!decoded || typeof decoded !== "object" || !decodedId || !ObjectId.isValid(decodedId)) {
+        console.error("Auth Error: Invalid or missing ID in payload", decoded);
+        throw new UnauthorizedError("Invalid session token");
       }
 
       // Check if user is still active in database
@@ -93,7 +93,7 @@ export class AuthMiddleware implements ExpressMiddlewareInterface {
         companyName: user?.companyName || admin?.companyName,
         roleId: user?.roleId?.toString() || admin?.roleId || decoded.roleId,
         role: role // attach full role object with permissions
-      }
+      };
       if (admin) {
         (req as any).admin = {
           ...decoded,

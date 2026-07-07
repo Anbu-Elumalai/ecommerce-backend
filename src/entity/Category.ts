@@ -42,11 +42,19 @@ export class Category {
   // Example: "home-living/kitchen"
 
   // 🔹 Media
-  @Column({ nullable: true })
-    image?: string;
+  @Column("json", { nullable: true })
+    image?: {
+      url: string;
+      originalName: string;
+      path: string;
+    } | null;
 
-  @Column({ nullable: true })
-    banner?: string;
+  @Column("json", { nullable: true })
+    banner?: {
+      url: string;
+      originalName: string;
+      path: string;
+    } | null;
 
   // 🔹 Settings
   @Column({

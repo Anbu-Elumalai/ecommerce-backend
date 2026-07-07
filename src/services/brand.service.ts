@@ -4,6 +4,8 @@ import { CreateBrandDto, UpdateBrandDto } from "../dto/admin/Brand.dto";
 import { slugify } from "../utils/helpers";
 import { BadRequestError, NotFoundError } from "routing-controllers";
 import { ObjectId } from "mongodb";
+import imageService from "../utils/upload";
+import path from "path";
 
 export class BrandService {
   private brandRepo = AppDataSource.getMongoRepository(Brand);
@@ -31,6 +33,10 @@ export class BrandService {
       slug: finalSlug,
       isDeleted: false
     });
+
+    // Process image uploads
+    brand.logo = await this.processImageField(data.logo, "brands");
+    brand.banner = await this.processImageField(data.banner, "brands");
 
     return await this.brandRepo.save(brand);
   }
@@ -113,6 +119,14 @@ export class BrandService {
 
     Object.assign(brand, data);
 
+    // Process image uploads on update
+    if (data.logo !== undefined) {
+      brand.logo = await this.processImageField(data.logo, "brands", brand.logo);
+    }
+    if (data.banner !== undefined) {
+      brand.banner = await this.processImageField(data.banner, "brands", brand.banner);
+    }
+
     return await this.brandRepo.save(brand);
   }
 
@@ -123,5 +137,79 @@ export class BrandService {
 
     brand.isDeleted = true;
     await this.brandRepo.save(brand);
+  }
+
+  async updateStatus(id: string, isActive: boolean): Promise<Brand> {
+    const brand = await this.getById(id);
+    brand.isActive = isActive;
+    return await this.brandRepo.save(brand);
+  }
+
+  async bulkDelete(ids: string[]): Promise<{ deletedCount: number }> {
+    const objectIds = ids.map(id => new ObjectId(id));
+    
+    await this.brandRepo.update(
+      { _id: { $in: objectIds } } as any,
+      { isDeleted: true } as any
+    );
+
+    return {
+      deletedCount: ids.length
+    };
+  }
+
+  /**
+   * Private helper to process image fields (base64 string vs existing object)
+   */
+  private async processImageField(
+    imageVal: any,
+    folder: string = "brands",
+    oldImageVal?: any
+  ): Promise<any> {
+    if (!imageVal) {
+      if (oldImageVal && oldImageVal.path) {
+        const oldFileName = path.basename(oldImageVal.path);
+        await imageService.deleteImage(folder, oldFileName);
+      }
+      return null;
+    }
+
+    // If it is a base64 data URL string, save it as a new file
+    if (typeof imageVal === "string" && imageVal.startsWith("data:")) {
+      // Get extension from mimetype
+      const match = imageVal.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,/);
+      let fileExt = ".png"; // default fallback
+      if (match && match[1]) {
+        const mime = match[1];
+        if (mime === "image/svg+xml") fileExt = ".svg";
+        else if (mime === "image/jpeg" || mime === "image/jpg") fileExt = ".jpg";
+        else if (mime === "image/png") fileExt = ".png";
+        else if (mime === "image/webp") fileExt = ".webp";
+      }
+
+      const fileName = `media-${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`;
+      
+      let oldFileName: string | undefined;
+      if (oldImageVal && oldImageVal.path) {
+        oldFileName = path.basename(oldImageVal.path);
+      }
+
+      const success = await imageService.imageUpload(imageVal, folder, fileName, oldFileName);
+      if (success) {
+        return {
+          url: `/${folder}/${fileName}`,
+          originalName: `${folder}-image${fileExt}`,
+          path: `${folder}/${fileName}`
+        };
+      }
+      return null;
+    }
+
+    // If it's already a valid object, return it as-is
+    if (typeof imageVal === "object" && imageVal.url && imageVal.path) {
+      return imageVal;
+    }
+
+    return null;
   }
 }

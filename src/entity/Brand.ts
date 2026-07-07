@@ -23,11 +23,19 @@ export class Brand {
   @Column({ nullable: true })
     description?: string;
 
-  @Column()
-    logo?: string; // URL
+  @Column("json", { nullable: true })
+    logo?: {
+      url: string;
+      originalName: string;
+      path: string;
+    } | null;
 
-  @Column({ nullable: true })
-    banner?: string; // URL
+  @Column("json", { nullable: true })
+    banner?: {
+      url: string;
+      originalName: string;
+      path: string;
+    } | null;
 
   @Column({ default: true })
     isActive!: boolean;

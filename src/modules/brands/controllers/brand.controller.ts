@@ -8,9 +8,10 @@ import {
   Param,
   QueryParams,
   HttpCode,
-  UseBefore
+  UseBefore,
+  Patch
 } from "routing-controllers";
-import { CreateBrandDto, UpdateBrandDto } from "../../../dto/admin/Brand.dto";
+import { CreateBrandDto, UpdateBrandDto, BulkDeleteBrandDto, UpdateBrandStatusDto } from "../../../dto/admin/Brand.dto";
 import { BrandService } from "../../../services/brand.service";
 import { StatusCodes } from "http-status-codes";
 import pagination from "../../../utils/pagination";
@@ -60,6 +61,28 @@ export class BrandController {
       success: true,
       message: "Brand updated successfully",
       data: brand
+    };
+  }
+
+  @Patch("/:id/status")
+  @UseBefore(canAccess("brands", "edit"))
+  async updateStatus(@Param("id") id: string, @Body() body: UpdateBrandStatusDto) {
+    const brand = await this.brandService.updateStatus(id, body.isActive);
+    return {
+      success: true,
+      message: "Brand status updated successfully",
+      data: brand
+    };
+  }
+
+  @Post("/bulk-delete")
+  @UseBefore(canAccess("brands", "delete"))
+  async bulkDelete(@Body() body: BulkDeleteBrandDto) {
+    const result = await this.brandService.bulkDelete(body.ids);
+    return {
+      success: true,
+      message: "Bulk delete operation completed",
+      data: result
     };
   }
 

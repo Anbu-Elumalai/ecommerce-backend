@@ -11,7 +11,7 @@ import {
   UseBefore,
   QueryParams
 } from "routing-controllers";
-import { CreateCategoryDto, UpdateCategoryDto } from "../../../dto/admin/Category.dto";
+import { CreateCategoryDto, UpdateCategoryDto, BulkDeleteCategoryDto } from "../../../dto/admin/Category.dto";
 import { CategoryService } from "../../../services/category.service";
 import { StatusCodes } from "http-status-codes";
 import pagination from "../../../utils/pagination";
@@ -121,7 +121,7 @@ export class CategoryController {
 
   @Post("/bulk-delete")
   @UseBefore(canAccess("categories", "delete"))
-  async bulkDelete(@Body() body: { ids: string[] }) {
+  async bulkDelete(@Body() body: BulkDeleteCategoryDto) {
     const result = await this.categoryService.bulkDelete(body.ids);
     return {
       success: true,

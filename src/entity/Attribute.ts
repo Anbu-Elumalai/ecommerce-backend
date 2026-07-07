@@ -8,12 +8,31 @@ import {
 } from "typeorm";
 import { ObjectId } from "mongodb";
 
+export enum AttributeType {
+  SELECT = "select",
+  MULTISELECT = "multiselect",
+  TEXT = "text",
+  NUMBER = "number",
+  BOOLEAN = "boolean",
+  DATE = "date"
+}
+
 export enum AttributeDisplayType {
   DROPDOWN = "dropdown",
-  COLOR = "color",
   RADIO = "radio",
-  MULTISELECT = "multiselect",
+  CHECKBOX = "checkbox",
+  COLOR = "color",
+  IMAGE = "image",
   TEXT = "text"
+}
+
+export enum AttributeGroup {
+  GENERAL = "general",
+  VARIANTS = "variants",
+  DIMENSIONS = "dimensions",
+  SPECIFICATIONS = "specifications",
+  SHIPPING = "shipping",
+  NUTRITION = "nutrition"
 }
 
 export enum AttributeStatus {
@@ -21,77 +40,138 @@ export enum AttributeStatus {
   INACTIVE = "inactive"
 }
 
-// 🔹 Better than interface (optional but recommended)
 export class AttributeValue {
   @Column()
-    label!: string;
+  label!: string;
 
   @Column()
-    value!: string;
+  value!: string;
 
+  // Used only when displayType = COLOR
   @Column({ nullable: true })
-    color?: string;
+  color?: string;
+
+  // Used only when displayType = IMAGE
+  @Column({ nullable: true })
+  image?: string;
+
+  @Column({ default: true })
+  isActive!: boolean;
 
   @Column({ default: 0 })
-    sortOrder!: number;
+  sortOrder!: number;
 }
 
 @Entity("attributes")
 @Index(["slug"], { unique: true })
 @Index(["status"])
+@Index(["group"])
 export class Attribute {
+
   @ObjectIdColumn()
-    _id!: ObjectId;
+  _id!: ObjectId;
 
-  // 🔹 Identity
+  // ===========================
+  // Basic Information
+  // ===========================
+
   @Column()
-    name!: string;
+  name!: string;
 
   @Column()
-    slug!: string;
+  slug!: string;
 
-  // 🔹 Display
+  @Column({ nullable: true })
+  description?: string;
+
+  // ===========================
+  // Organization
+  // ===========================
+
+  @Column({
+    type: "enum",
+    enum: AttributeGroup,
+    default: AttributeGroup.GENERAL
+  })
+  group!: AttributeGroup;
+
+  // ===========================
+  // Attribute Configuration
+  // ===========================
+
+  @Column({
+    type: "enum",
+    enum: AttributeType,
+    default: AttributeType.SELECT
+  })
+  type!: AttributeType;
+
   @Column({
     type: "enum",
     enum: AttributeDisplayType,
     default: AttributeDisplayType.DROPDOWN
   })
-    displayType!: AttributeDisplayType;
+  displayType!: AttributeDisplayType;
 
-  // 🔹 Values
+  // ===========================
+  // Values
+  // ===========================
+
   @Column()
-    values!: AttributeValue[];
+  values!: AttributeValue[];
 
-  // 🔹 Behavior
-  @Column({ default: true })
-    usedForVariants!: boolean;
+  // ===========================
+  // Behaviour
+  // ===========================
+
+  // Used to generate product variants
+  @Column({ default: false })
+  usedForVariants!: boolean;
 
   @Column({ default: false })
-    isRequired!: boolean;
+  isRequired!: boolean;
 
   @Column({ default: true })
-    isVisible!: boolean;
+  isVisible!: boolean;
 
-  // 🔹 Status
+  // Show in category/product filters
+  @Column({ default: true })
+  isFilterable!: boolean;
+
+  // Show on product details page
+  @Column({ default: true })
+  showOnProductPage!: boolean;
+
+  // ===========================
+  // Status
+  // ===========================
+
   @Column({
     type: "enum",
     enum: AttributeStatus,
     default: AttributeStatus.ACTIVE
   })
-    status!: AttributeStatus;
+  status!: AttributeStatus;
 
-  // 🔹 Sorting
+  // ===========================
+  // Sorting
+  // ===========================
+
   @Column({ default: 0 })
-    sortOrder!: number;
+  sortOrder!: number;
 
-  // 🔹 Soft delete
+  // ===========================
+  // Soft Delete
+  // ===========================
+  @Column({ default: true })
+  isActive!: boolean;
+
   @Column({ default: false })
-    isDeleted!: boolean;
+  isDeleted!: boolean;
 
-  // 🔹 Timestamps
   @CreateDateColumn()
-    createdAt!: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-    updatedAt!: Date;
+  updatedAt!: Date;
 }

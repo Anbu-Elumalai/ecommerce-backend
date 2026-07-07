@@ -3,7 +3,8 @@ import {
   IsNotEmpty,
   IsOptional,
   IsBoolean,
-  MinLength
+  MinLength,
+  IsArray
 } from "class-validator";
 
 export class CreateBrandDto {
@@ -20,13 +21,11 @@ export class CreateBrandDto {
   @IsOptional()
     description?: string;
 
-  @IsString()
   @IsOptional()
-    logo?: string;
+    logo?: any;
 
-  @IsString()
   @IsOptional()
-    banner?: string;
+    banner?: any;
 
   @IsBoolean()
   @IsOptional()
@@ -62,13 +61,11 @@ export class UpdateBrandDto {
   @IsOptional()
     description?: string;
 
-  @IsString()
   @IsOptional()
-    logo?: string;
+    logo?: any;
 
-  @IsString()
   @IsOptional()
-    banner?: string;
+    banner?: any;
 
   @IsBoolean()
   @IsOptional()
@@ -89,4 +86,17 @@ export class UpdateBrandDto {
   @IsString()
   @IsOptional()
     countryOfOrigin?: string;
+}
+
+export class BulkDeleteBrandDto {
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+    ids!: string[];
+}
+
+export class UpdateBrandStatusDto {
+  @IsBoolean()
+  @IsNotEmpty()
+    isActive!: boolean;
 }

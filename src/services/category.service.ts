@@ -3,6 +3,8 @@ import { Category } from "../entity/Category";
 import { CreateCategoryDto, UpdateCategoryDto } from "../dto/admin/Category.dto";
 import { ObjectId } from "mongodb";
 import { BadRequestError, NotFoundError } from "routing-controllers";
+import imageService from "../utils/upload";
+import path from "path";
 
 export class CategoryService {
   private categoryRepo = AppDataSource.getMongoRepository(Category);
@@ -63,6 +65,10 @@ export class CategoryService {
     category.path = path;
     category.isDeleted = false;
 
+    // Process image uploads
+    category.image = await this.processImageField(data.image, "categories");
+    category.banner = await this.processImageField(data.banner, "categories");
+
     return await this.categoryRepo.save(category);
   }
 
@@ -70,7 +76,7 @@ export class CategoryService {
    * List categories with filters
    */
   async list(query: any) {
-    const { search, status, parentId, page = 0, limit = 10, sortBy = "sortOrder", sortOrder = "ASC" } = query;
+    const { search, status, parentId, level, page = 0, limit = 10, sortBy = "sortOrder", sortOrder = "ASC" } = query;
 
     const skip = Number(page) * Number(limit);
     const take = Number(limit);
@@ -87,6 +93,10 @@ export class CategoryService {
 
     if (parentId !== undefined) {
       filter.parentId = parentId === "null" ? null : new ObjectId(parentId);
+    }
+
+    if (level !== undefined && level !== null && level !== "") {
+      filter.level = Number(level);
     }
 
     const [categories, total] = await this.categoryRepo.findAndCount({
@@ -188,8 +198,12 @@ export class CategoryService {
     // Explicitly assign fields to avoid overwriting with undefined
     if (data.name !== undefined) category.name = data.name;
     if (data.description !== undefined) category.description = data.description;
-    if (data.image !== undefined) category.image = data.image;
-    if (data.banner !== undefined) category.banner = data.banner;
+    if (data.image !== undefined) {
+      category.image = await this.processImageField(data.image, "categories", category.image);
+    }
+    if (data.banner !== undefined) {
+      category.banner = await this.processImageField(data.banner, "categories", category.banner);
+    }
     if (data.status !== undefined) category.status = data.status;
     if (data.showInMenu !== undefined) category.showInMenu = data.showInMenu;
     if (data.isFeatured !== undefined) category.isFeatured = data.isFeatured;
@@ -283,7 +297,7 @@ export class CategoryService {
         children: []
       };
       categoryMap.set(node._id, node);
-      
+
       const parentIdStr = node.parentId;
       if (parentIdStr) {
         if (!childrenMap.has(parentIdStr)) {
@@ -333,5 +347,60 @@ export class CategoryService {
     if (!category) throw new NotFoundError("Category not found");
     category.sortOrder = sortOrder;
     return await this.categoryRepo.save(category);
+  }
+
+  /**
+   * Private helper to process image fields (base64 string vs existing object)
+   */
+  private async processImageField(
+    imageVal: any,
+    folder: string = "categories",
+    oldImageVal?: any
+  ): Promise<any> {
+    if (!imageVal) {
+      if (oldImageVal && oldImageVal.path) {
+        const oldFileName = path.basename(oldImageVal.path);
+        await imageService.deleteImage(folder, oldFileName);
+      }
+      return null;
+    }
+
+    // If it is a base64 data URL string, save it as a new file
+    if (typeof imageVal === "string" && imageVal.startsWith("data:")) {
+      // Get extension from mimetype
+      const match = imageVal.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,/);
+      let fileExt = ".png"; // default fallback
+      if (match && match[1]) {
+        const mime = match[1];
+        if (mime === "image/svg+xml") fileExt = ".svg";
+        else if (mime === "image/jpeg" || mime === "image/jpg") fileExt = ".jpg";
+        else if (mime === "image/png") fileExt = ".png";
+        else if (mime === "image/webp") fileExt = ".webp";
+      }
+
+      const fileName = `media-${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`;
+      
+      let oldFileName: string | undefined;
+      if (oldImageVal && oldImageVal.path) {
+        oldFileName = path.basename(oldImageVal.path);
+      }
+
+      const success = await imageService.imageUpload(imageVal, folder, fileName, oldFileName);
+      if (success) {
+        return {
+          url: `/${folder}/${fileName}`,
+          originalName: `category-image${fileExt}`,
+          path: `${folder}/${fileName}`
+        };
+      }
+      return null;
+    }
+
+    // If it's already a valid object, return it as-is
+    if (typeof imageVal === "object" && imageVal.url && imageVal.path) {
+      return imageVal;
+    }
+
+    return null;
   }
 }

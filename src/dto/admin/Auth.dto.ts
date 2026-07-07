@@ -43,7 +43,6 @@ export class LoginDto {
       pin!: string;
 }
 
-
 export class ChangePinDto {
     @Length(4, 4)
     @IsString()

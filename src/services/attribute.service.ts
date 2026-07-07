@@ -204,6 +204,8 @@ export class AttributeService {
         label,
         value,
         color: v.color || null,
+        image: v.image || null,
+        isActive: v.isActive !== undefined ? Boolean(v.isActive) : true,
         sortOrder: v.sortOrder !== undefined ? Number(v.sortOrder) : 0
       };
     });

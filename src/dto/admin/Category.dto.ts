@@ -27,13 +27,11 @@ export class CreateCategoryDto {
   @IsOptional()
     parentId?: string | null;
 
-  @IsString()
   @IsOptional()
-    image?: string;
+    image?: any;
 
-  @IsString()
   @IsOptional()
-    banner?: string;
+    banner?: any;
 
   @IsEnum(CategoryStatus)
   @IsOptional()
@@ -82,13 +80,11 @@ export class UpdateCategoryDto {
   @IsOptional()
     parentId?: string | null;
 
-  @IsString()
   @IsOptional()
-    image?: string;
+    image?: any;
 
-  @IsString()
   @IsOptional()
-    banner?: string;
+    banner?: any;
 
   @IsEnum(CategoryStatus)
   @IsOptional()
@@ -118,4 +114,11 @@ export class UpdateCategoryDto {
   @IsString({ each: true })
   @IsOptional()
     metaKeywords?: string[];
+}
+
+export class BulkDeleteCategoryDto {
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+    ids!: string[];
 }
