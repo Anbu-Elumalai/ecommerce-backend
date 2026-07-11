@@ -33,7 +33,18 @@ function handleErrorResponse(error: any, res: any) {
       .json(error.toResponse());
   }
 
-  return res.status(500).json({
+  const statusCode = error.statusCode || error.httpCode;
+  const isJwtError =
+    error.name === "JsonWebTokenError" ||
+    error.name === "TokenExpiredError" ||
+    (typeof error.message === "string" && (
+      error.message.toLowerCase().includes("jwt") ||
+      error.message.toLowerCase().includes("token")
+    ));
+
+  const finalStatus = isJwtError ? 401 : (statusCode || 500);
+
+  return res.status(finalStatus).json({
     status: "error",
     message: error.message || "Internal Server Error"
   });

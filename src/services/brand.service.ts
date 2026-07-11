@@ -147,7 +147,7 @@ export class BrandService {
 
   async bulkDelete(ids: string[]): Promise<{ deletedCount: number }> {
     const objectIds = ids.map(id => new ObjectId(id));
-    
+
     await this.brandRepo.update(
       { _id: { $in: objectIds } } as any,
       { isDeleted: true } as any
@@ -188,7 +188,7 @@ export class BrandService {
       }
 
       const fileName = `media-${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`;
-      
+
       let oldFileName: string | undefined;
       if (oldImageVal && oldImageVal.path) {
         oldFileName = path.basename(oldImageVal.path);

@@ -1,6 +1,6 @@
 import { ProductService } from "../modules/products/services/product.service";
 import { ProductRepository } from "../modules/products/repository/product.repository";
-import { ProductType, ProductStatus, ProductPublishState, Product } from "../entity/Product";
+import { ProductStatus, ProductPublishState, Product } from "../entity/Product";
 import { CreateProductDto } from "../dto/admin/Product.dto";
 import { ObjectId } from "mongodb";
 
@@ -41,7 +41,7 @@ describe("ProductService Unit Tests", () => {
       // Mock repository calls
       mockProductRepo.findBySlug.mockResolvedValue(null);
       mockProductRepo.findBySku.mockResolvedValue(null);
-      
+
       const createdProduct = new Product();
       createdProduct._id = new ObjectId();
       createdProduct.name = dto.name;

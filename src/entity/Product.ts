@@ -4,8 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  Index,
-  BeforeInsert
+  Index
 } from "typeorm";
 import { ObjectId } from "mongodb";
 
@@ -41,175 +40,175 @@ export enum ProductShippingClass {
 
 export class ProductImage {
   @Column()
-  id!: string;
+    id!: string;
 
   @Column()
-  url!: string;
+    url!: string;
 
   @Column({ nullable: true })
-  thumbnailUrl?: string;
+    thumbnailUrl?: string;
 
   @Column({ nullable: true })
-  altText?: string;
+    altText?: string;
 
   @Column({ default: false })
-  isPrimary!: boolean;
+    isPrimary!: boolean;
 
   @Column({ default: 0 })
-  sortOrder!: number;
+    sortOrder!: number;
 }
 
 export class ProductPricing {
   /** Maximum Retail Price */
   @Column({ default: 0 })
-  mrp!: number;
+    mrp!: number;
 
   /** Actual selling price (≤ MRP) */
   @Column({ default: 0 })
-  sellingPrice!: number;
+    sellingPrice!: number;
 
   /** Landed/cost price for margin calculation */
   @Column({ nullable: true })
-  costPrice?: number;
+    costPrice?: number;
 
   /** Promotional offer price (≤ sellingPrice) */
   @Column({ nullable: true })
-  offerPrice?: number;
+    offerPrice?: number;
 
   /** GST percentage (0, 5, 12, 18, 28) */
   @Column({ nullable: true })
-  taxRate?: number;
+    taxRate?: number;
 
   /** Harmonized System Nomenclature code for GST */
   @Column({ nullable: true })
-  hsnCode?: string;
+    hsnCode?: string;
 
   @Column({ default: "INR" })
-  currency!: string;
+    currency!: string;
 }
 
 export class ProductInventory {
   @Column({ default: true })
-  trackInventory!: boolean;
+    trackInventory!: boolean;
 
   @Column({ default: 0 })
-  stockQty!: number;
+    stockQty!: number;
 
   /** Alert threshold: notify when stock falls below this */
   @Column({ nullable: true })
-  lowStockAlert?: number;
+    lowStockAlert?: number;
 
   @Column({ default: false })
-  allowBackOrders!: boolean;
+    allowBackOrders!: boolean;
 
   @Column({ nullable: true })
-  minOrderQty?: number;
+    minOrderQty?: number;
 
   @Column({ nullable: true })
-  maxOrderQty?: number;
+    maxOrderQty?: number;
 
   /** e.g. "24 months" */
   @Column({ nullable: true })
-  shelfLife?: string;
+    shelfLife?: string;
 
   @Column({ nullable: true })
-  expiryDate?: string;
+    expiryDate?: string;
 }
 
 export class ProductShipping {
   /** Weight in kilograms */
   @Column({ nullable: true })
-  weight?: number;
+    weight?: number;
 
   /** Length in centimeters */
   @Column({ nullable: true })
-  length?: number;
+    length?: number;
 
   /** Width in centimeters */
   @Column({ nullable: true })
-  width?: number;
+    width?: number;
 
   /** Height in centimeters */
   @Column({ nullable: true })
-  height?: number;
+    height?: number;
 
   @Column({ nullable: true })
-  shippingClass?: ProductShippingClass;
+    shippingClass?: ProductShippingClass;
 
   /** Estimated delivery in days */
   @Column({ nullable: true })
-  deliveryDays?: number;
+    deliveryDays?: number;
 
   @Column({ default: false })
-  isFragile!: boolean;
+    isFragile!: boolean;
 
   @Column({ default: false })
-  isTemperatureControlled!: boolean;
+    isTemperatureControlled!: boolean;
 }
 
 export class ProductSEO {
   @Column({ nullable: true })
-  metaTitle?: string;
+    metaTitle?: string;
 
   @Column({ nullable: true })
-  metaDescription?: string;
+    metaDescription?: string;
 
   @Column("simple-array", { nullable: true })
-  metaKeywords?: string[];
+    metaKeywords?: string[];
 
   @Column({ nullable: true })
-  canonicalUrl?: string;
+    canonicalUrl?: string;
 }
 
 export class ProductAttributeValue {
   @Column()
-  attributeId!: string;
+    attributeId!: string;
 
   @Column()
-  attributeName!: string;
+    attributeName!: string;
 
   /** Selected value labels/slugs for this product */
   @Column()
-  values!: string[];
+    values!: string[];
 }
 
 export class ProductVariant {
   @Column()
-  id!: string;
+    id!: string;
 
   /**
    * Axis combination, e.g. { Weight: "1kg", Flavor: "Chocolate" }
    * Key = attribute name, Value = selected value label
    */
   @Column()
-  combination!: Record<string, string>;
+    combination!: Record<string, string>;
 
   @Column()
-  sku!: string;
+    sku!: string;
 
   @Column({ nullable: true })
-  barcode?: string;
+    barcode?: string;
 
   @Column({ default: 0 })
-  mrp!: number;
+    mrp!: number;
 
   @Column({ default: 0 })
-  sellingPrice!: number;
+    sellingPrice!: number;
 
   @Column({ nullable: true })
-  costPrice?: number;
+    costPrice?: number;
 
   @Column({ default: 0 })
-  stockQty!: number;
+    stockQty!: number;
 
   @Column({ default: "active" })
-  status!: "active" | "inactive";
+    status!: "active" | "inactive";
 
   @Column({ nullable: true })
-  imageUrl?: string;
+    imageUrl?: string;
 
   @Column({ nullable: true })
-  weight?: number;
+    weight?: number;
 }
 
 // ─── Root Entity ──────────────────────────────────────────────────────────────
@@ -227,100 +226,100 @@ export class ProductVariant {
 export class Product {
 
   @ObjectIdColumn()
-  _id!: ObjectId;
+    _id!: ObjectId;
 
   // ─── Basic Information ───────────────────────────────────────────────────
 
   @Column()
-  name!: string;
+    name!: string;
 
   @Column()
-  slug!: string;
+    slug!: string;
 
   @Column({ nullable: true })
-  shortDescription?: string;
+    shortDescription?: string;
 
   @Column({ nullable: true })
-  description?: string;
+    description?: string;
 
   @Column({
     type: "enum",
     enum: ProductType,
     default: ProductType.SIMPLE
   })
-  productType!: ProductType;
+    productType!: ProductType;
 
   @Column()
-  sku!: string;
+    sku!: string;
 
   @Column({ nullable: true })
-  barcode?: string;
+    barcode?: string;
 
   // ─── Categorisation ──────────────────────────────────────────────────────
 
   @Column()
-  categoryId!: string;
+    categoryId!: string;
 
   @Column({ nullable: true })
-  subCategoryId?: string;
+    subCategoryId?: string;
 
   @Column({ nullable: true })
-  childCategoryId?: string;
+    childCategoryId?: string;
 
   @Column({ nullable: true })
-  brandId?: string;
+    brandId?: string;
 
   @Column("simple-array", { nullable: true })
-  tags?: string[];
+    tags?: string[];
 
   @Column("simple-array", { nullable: true })
-  collections?: string[];
+    collections?: string[];
 
   // ─── Media ───────────────────────────────────────────────────────────────
 
   @Column("simple-json", { nullable: true })
-  images?: ProductImage[];
+    images?: ProductImage[];
 
   // ─── Pricing ─────────────────────────────────────────────────────────────
 
   @Column("simple-json")
-  pricing!: ProductPricing;
+    pricing!: ProductPricing;
 
   // ─── Inventory ───────────────────────────────────────────────────────────
 
   @Column("simple-json")
-  inventory!: ProductInventory;
+    inventory!: ProductInventory;
 
   // ─── Attributes ──────────────────────────────────────────────────────────
 
   @Column("simple-json", { nullable: true })
-  selectedAttributes?: ProductAttributeValue[];
+    selectedAttributes?: ProductAttributeValue[];
 
   // ─── Variants (variable products only) ───────────────────────────────────
 
   @Column("simple-json", { nullable: true })
-  variants?: ProductVariant[];
+    variants?: ProductVariant[];
 
   // ─── Shipping ────────────────────────────────────────────────────────────
 
   @Column("simple-json", { nullable: true })
-  shipping?: ProductShipping;
+    shipping?: ProductShipping;
 
   // ─── SEO ─────────────────────────────────────────────────────────────────
 
   @Column("simple-json", { nullable: true })
-  seo?: ProductSEO;
+    seo?: ProductSEO;
 
   // ─── Related Products ────────────────────────────────────────────────────
 
   @Column("simple-array", { nullable: true })
-  crossSellIds?: string[];
+    crossSellIds?: string[];
 
   @Column("simple-array", { nullable: true })
-  upsellIds?: string[];
+    upsellIds?: string[];
 
   @Column("simple-array", { nullable: true })
-  frequentlyBoughtIds?: string[];
+    frequentlyBoughtIds?: string[];
 
   // ─── Publishing ──────────────────────────────────────────────────────────
 
@@ -329,59 +328,59 @@ export class Product {
     enum: ProductStatus,
     default: ProductStatus.ACTIVE
   })
-  status!: ProductStatus;
+    status!: ProductStatus;
 
   @Column({
     type: "enum",
     enum: ProductPublishState,
     default: ProductPublishState.DRAFT
   })
-  publishState!: ProductPublishState;
+    publishState!: ProductPublishState;
 
   @Column({ nullable: true })
-  scheduledAt?: Date;
+    scheduledAt?: Date;
 
   @Column({ default: 0 })
-  sortOrder!: number;
+    sortOrder!: number;
 
   // ─── Analytics ───────────────────────────────────────────────────────────
 
   @Column({ default: 0 })
-  viewCount!: number;
+    viewCount!: number;
 
   @Column({ default: 0 })
-  salesCount!: number;
+    salesCount!: number;
 
   @Column({ default: 0 })
-  reviewCount!: number;
+    reviewCount!: number;
 
   @Column({ nullable: true })
-  averageRating?: number;
+    averageRating?: number;
 
   // ─── Audit ───────────────────────────────────────────────────────────────
 
   @Column({ nullable: true })
-  createdBy?: string;
+    createdBy?: string;
 
   @Column({ nullable: true })
-  updatedBy?: string;
+    updatedBy?: string;
 
   @Column({ nullable: true })
-  deletedBy?: string;
+    deletedBy?: string;
 
   @Column({ nullable: true })
-  deletedAt?: Date;
+    deletedAt?: Date;
 
   // ─── Soft Delete ─────────────────────────────────────────────────────────
 
   @Column({ default: false })
-  isDeleted!: boolean;
+    isDeleted!: boolean;
 
   // ─── Timestamps ──────────────────────────────────────────────────────────
 
   @CreateDateColumn()
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt!: Date;
+    updatedAt!: Date;
 }

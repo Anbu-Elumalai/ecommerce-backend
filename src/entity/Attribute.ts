@@ -42,24 +42,24 @@ export enum AttributeStatus {
 
 export class AttributeValue {
   @Column()
-  label!: string;
+    label!: string;
 
   @Column()
-  value!: string;
+    value!: string;
 
   // Used only when displayType = COLOR
   @Column({ nullable: true })
-  color?: string;
+    color?: string;
 
   // Used only when displayType = IMAGE
   @Column({ nullable: true })
-  image?: string;
+    image?: string;
 
   @Column({ default: true })
-  isActive!: boolean;
+    isActive!: boolean;
 
   @Column({ default: 0 })
-  sortOrder!: number;
+    sortOrder!: number;
 }
 
 @Entity("attributes")
@@ -69,20 +69,20 @@ export class AttributeValue {
 export class Attribute {
 
   @ObjectIdColumn()
-  _id!: ObjectId;
+    _id!: ObjectId;
 
   // ===========================
   // Basic Information
   // ===========================
 
   @Column()
-  name!: string;
+    name!: string;
 
   @Column()
-  slug!: string;
+    slug!: string;
 
   @Column({ nullable: true })
-  description?: string;
+    description?: string;
 
   // ===========================
   // Organization
@@ -93,7 +93,7 @@ export class Attribute {
     enum: AttributeGroup,
     default: AttributeGroup.GENERAL
   })
-  group!: AttributeGroup;
+    group!: AttributeGroup;
 
   // ===========================
   // Attribute Configuration
@@ -104,21 +104,21 @@ export class Attribute {
     enum: AttributeType,
     default: AttributeType.SELECT
   })
-  type!: AttributeType;
+    type!: AttributeType;
 
   @Column({
     type: "enum",
     enum: AttributeDisplayType,
     default: AttributeDisplayType.DROPDOWN
   })
-  displayType!: AttributeDisplayType;
+    displayType!: AttributeDisplayType;
 
   // ===========================
   // Values
   // ===========================
 
   @Column()
-  values!: AttributeValue[];
+    values!: AttributeValue[];
 
   // ===========================
   // Behaviour
@@ -126,21 +126,21 @@ export class Attribute {
 
   // Used to generate product variants
   @Column({ default: false })
-  usedForVariants!: boolean;
+    usedForVariants!: boolean;
 
   @Column({ default: false })
-  isRequired!: boolean;
+    isRequired!: boolean;
 
   @Column({ default: true })
-  isVisible!: boolean;
+    isVisible!: boolean;
 
   // Show in category/product filters
   @Column({ default: true })
-  isFilterable!: boolean;
+    isFilterable!: boolean;
 
   // Show on product details page
   @Column({ default: true })
-  showOnProductPage!: boolean;
+    showOnProductPage!: boolean;
 
   // ===========================
   // Status
@@ -151,27 +151,27 @@ export class Attribute {
     enum: AttributeStatus,
     default: AttributeStatus.ACTIVE
   })
-  status!: AttributeStatus;
+    status!: AttributeStatus;
 
   // ===========================
   // Sorting
   // ===========================
 
   @Column({ default: 0 })
-  sortOrder!: number;
+    sortOrder!: number;
 
   // ===========================
   // Soft Delete
   // ===========================
   @Column({ default: true })
-  isActive!: boolean;
+    isActive!: boolean;
 
   @Column({ default: false })
-  isDeleted!: boolean;
+    isDeleted!: boolean;
 
   @CreateDateColumn()
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt!: Date;
+    updatedAt!: Date;
 }

@@ -379,7 +379,7 @@ export class CategoryService {
       }
 
       const fileName = `media-${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`;
-      
+
       let oldFileName: string | undefined;
       if (oldImageVal && oldImageVal.path) {
         oldFileName = path.basename(oldImageVal.path);

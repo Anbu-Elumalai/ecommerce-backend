@@ -6,10 +6,6 @@ import {
   ProductType,
   ProductStatus,
   ProductPublishState,
-  ProductInventory,
-  ProductPricing,
-  ProductShipping,
-  ProductSEO,
   ProductImage,
   ProductVariant,
   ProductAttributeValue
@@ -586,8 +582,8 @@ export class ProductService {
           field === "mrp"
             ? product.pricing.mrp
             : field === "offerPrice"
-            ? product.pricing.offerPrice || product.pricing.sellingPrice
-            : product.pricing.sellingPrice;
+              ? product.pricing.offerPrice || product.pricing.sellingPrice
+              : product.pricing.sellingPrice;
 
         let newPrice: number;
         if (percentAdjustment !== undefined) {

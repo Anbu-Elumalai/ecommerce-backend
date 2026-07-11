@@ -8,6 +8,7 @@ import fileUpload from "express-fileupload";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
 import { seedAdmin } from "./seed/seedAdmin";
+import { seedTax } from "./seed/seedTax";
 import { createServer } from "http";
 import { initSocket } from "./utils/socket";
 import cron from "node-cron";
@@ -20,6 +21,7 @@ AppDataSource.initialize()
     const app = express();
     // seed default admin user
     await seedAdmin();
+    await seedTax();
     app.use(express.json());
 
     // Configure CORS securely based on env.ALLOWED_ORIGINS

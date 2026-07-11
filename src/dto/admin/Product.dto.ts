@@ -12,7 +12,6 @@ import {
   Min,
   Max,
   ValidateNested,
-  IsPositive,
   ArrayMinSize
 } from "class-validator";
 import { Type } from "class-transformer";
@@ -23,221 +22,221 @@ import { ProductType, ProductPublishState, ProductStatus, ProductShippingClass }
 export class ProductImageDto {
   @IsString()
   @IsOptional()
-  id?: string;
+    id?: string;
 
   @IsString()
   @IsNotEmpty()
-  url!: string;
+    url!: string;
 
   @IsString()
   @IsOptional()
-  thumbnailUrl?: string;
+    thumbnailUrl?: string;
 
   @IsString()
   @IsOptional()
-  altText?: string;
+    altText?: string;
 
   @IsBoolean()
   @IsOptional()
-  isPrimary?: boolean;
+    isPrimary?: boolean;
 
   @IsNumber()
   @IsOptional()
-  sortOrder?: number;
+    sortOrder?: number;
 }
 
 export class ProductPricingDto {
   @IsNumber()
   @Min(0)
-  mrp!: number;
+    mrp!: number;
 
   @IsNumber()
   @Min(0)
-  sellingPrice!: number;
-
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  costPrice?: number;
+    sellingPrice!: number;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  offerPrice?: number;
+    costPrice?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+    offerPrice?: number;
 
   @IsNumber()
   @Min(0)
   @Max(100)
   @IsOptional()
-  taxRate?: number;
+    taxRate?: number;
 
   @IsString()
   @IsOptional()
-  hsnCode?: string;
+    hsnCode?: string;
 
   @IsString()
   @IsOptional()
-  currency?: string;
+    currency?: string;
 }
 
 export class ProductInventoryDto {
   @IsBoolean()
   @IsOptional()
-  trackInventory?: boolean;
+    trackInventory?: boolean;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  stockQty?: number;
+    stockQty?: number;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  lowStockAlert?: number;
+    lowStockAlert?: number;
 
   @IsBoolean()
   @IsOptional()
-  allowBackOrders?: boolean;
+    allowBackOrders?: boolean;
 
   @IsNumber()
   @Min(1)
   @IsOptional()
-  minOrderQty?: number;
+    minOrderQty?: number;
 
   @IsNumber()
   @Min(1)
   @IsOptional()
-  maxOrderQty?: number;
+    maxOrderQty?: number;
 
   @IsString()
   @IsOptional()
-  shelfLife?: string;
+    shelfLife?: string;
 
   @IsString()
   @IsOptional()
-  expiryDate?: string;
+    expiryDate?: string;
 }
 
 export class ProductShippingDto {
   @IsNumber()
   @Min(0)
   @IsOptional()
-  weight?: number;
+    weight?: number;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  length?: number;
+    length?: number;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  width?: number;
+    width?: number;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  height?: number;
+    height?: number;
 
   @IsEnum(ProductShippingClass)
   @IsOptional()
-  shippingClass?: ProductShippingClass;
+    shippingClass?: ProductShippingClass;
 
   @IsNumber()
   @Min(1)
   @IsOptional()
-  deliveryDays?: number;
+    deliveryDays?: number;
 
   @IsBoolean()
   @IsOptional()
-  isFragile?: boolean;
+    isFragile?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  isTemperatureControlled?: boolean;
+    isTemperatureControlled?: boolean;
 }
 
 export class ProductSEODto {
   @IsString()
   @MaxLength(60)
   @IsOptional()
-  metaTitle?: string;
+    metaTitle?: string;
 
   @IsString()
   @MaxLength(160)
   @IsOptional()
-  metaDescription?: string;
+    metaDescription?: string;
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  metaKeywords?: string[];
+    metaKeywords?: string[];
 
   @IsString()
   @IsOptional()
-  canonicalUrl?: string;
+    canonicalUrl?: string;
 }
 
 export class ProductAttributeValueDto {
   @IsString()
   @IsNotEmpty()
-  attributeId!: string;
+    attributeId!: string;
 
   @IsString()
   @IsNotEmpty()
-  attributeName!: string;
+    attributeName!: string;
 
   @IsArray()
   @IsString({ each: true })
-  values!: string[];
+    values!: string[];
 }
 
 export class ProductVariantDto {
   @IsString()
   @IsOptional()
-  id?: string;
+    id?: string;
 
   @IsNotEmpty()
-  combination!: Record<string, string>;
+    combination!: Record<string, string>;
 
   @IsString()
   @IsNotEmpty()
-  sku!: string;
+    sku!: string;
 
   @IsString()
   @IsOptional()
-  barcode?: string;
+    barcode?: string;
 
   @IsNumber()
   @Min(0)
-  mrp!: number;
+    mrp!: number;
 
   @IsNumber()
   @Min(0)
-  sellingPrice!: number;
-
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  costPrice?: number;
+    sellingPrice!: number;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  stockQty?: number;
+    costPrice?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+    stockQty?: number;
 
   @IsIn(["active", "inactive"])
   @IsOptional()
-  status?: "active" | "inactive";
+    status?: "active" | "inactive";
 
   @IsString()
   @IsOptional()
-  imageUrl?: string;
+    imageUrl?: string;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  weight?: number;
+    weight?: number;
 }
 
 // ─── Create Product ───────────────────────────────────────────────────────────
@@ -248,138 +247,138 @@ export class CreateProductDto {
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(200)
-  name!: string;
+    name!: string;
 
   @IsString()
   @IsOptional()
-  slug?: string;
+    slug?: string;
 
   @IsString()
   @IsOptional()
   @MaxLength(300)
-  shortDescription?: string;
+    shortDescription?: string;
 
   @IsString()
   @IsOptional()
-  description?: string;
+    description?: string;
 
   @IsEnum(ProductType)
   @IsOptional()
-  productType?: ProductType;
+    productType?: ProductType;
 
   @IsString()
   @IsOptional()
-  sku?: string;
+    sku?: string;
 
   @IsString()
   @IsOptional()
-  barcode?: string;
+    barcode?: string;
 
   // Categorisation
   @IsString()
   @IsNotEmpty()
-  categoryId!: string;
+    categoryId!: string;
 
   @IsString()
   @IsOptional()
-  subCategoryId?: string;
+    subCategoryId?: string;
 
   @IsString()
   @IsOptional()
-  childCategoryId?: string;
+    childCategoryId?: string;
 
   @IsString()
   @IsOptional()
-  brandId?: string;
+    brandId?: string;
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  tags?: string[];
+    tags?: string[];
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  collections?: string[];
+    collections?: string[];
 
   // Media
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductImageDto)
   @IsOptional()
-  images?: ProductImageDto[];
+    images?: ProductImageDto[];
 
   // Pricing
   @ValidateNested()
   @Type(() => ProductPricingDto)
   @IsNotEmpty()
-  pricing!: ProductPricingDto;
+    pricing!: ProductPricingDto;
 
   // Inventory
   @ValidateNested()
   @Type(() => ProductInventoryDto)
   @IsOptional()
-  inventory?: ProductInventoryDto;
+    inventory?: ProductInventoryDto;
 
   // Attributes
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductAttributeValueDto)
   @IsOptional()
-  selectedAttributes?: ProductAttributeValueDto[];
+    selectedAttributes?: ProductAttributeValueDto[];
 
   // Variants
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductVariantDto)
   @IsOptional()
-  variants?: ProductVariantDto[];
+    variants?: ProductVariantDto[];
 
   // Shipping
   @ValidateNested()
   @Type(() => ProductShippingDto)
   @IsOptional()
-  shipping?: ProductShippingDto;
+    shipping?: ProductShippingDto;
 
   // SEO
   @ValidateNested()
   @Type(() => ProductSEODto)
   @IsOptional()
-  seo?: ProductSEODto;
+    seo?: ProductSEODto;
 
   // Related Products
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  crossSellIds?: string[];
+    crossSellIds?: string[];
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  upsellIds?: string[];
+    upsellIds?: string[];
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  frequentlyBoughtIds?: string[];
+    frequentlyBoughtIds?: string[];
 
   // Publishing
   @IsEnum(ProductStatus)
   @IsOptional()
-  status?: ProductStatus;
+    status?: ProductStatus;
 
   @IsEnum(ProductPublishState)
   @IsOptional()
-  publishState?: ProductPublishState;
+    publishState?: ProductPublishState;
 
   @IsString()
   @IsOptional()
-  scheduledAt?: string;
+    scheduledAt?: string;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  sortOrder?: number;
+    sortOrder?: number;
 }
 
 // ─── Update Product ───────────────────────────────────────────────────────────
@@ -389,128 +388,128 @@ export class UpdateProductDto {
   @MinLength(3)
   @MaxLength(200)
   @IsOptional()
-  name?: string;
+    name?: string;
 
   @IsString()
   @IsOptional()
-  slug?: string;
+    slug?: string;
 
   @IsString()
   @IsOptional()
   @MaxLength(300)
-  shortDescription?: string;
+    shortDescription?: string;
 
   @IsString()
   @IsOptional()
-  description?: string;
+    description?: string;
 
   @IsEnum(ProductType)
   @IsOptional()
-  productType?: ProductType;
+    productType?: ProductType;
 
   @IsString()
   @IsOptional()
-  sku?: string;
+    sku?: string;
 
   @IsString()
   @IsOptional()
-  barcode?: string;
+    barcode?: string;
 
   @IsString()
   @IsOptional()
-  categoryId?: string;
+    categoryId?: string;
 
   @IsString()
   @IsOptional()
-  subCategoryId?: string;
+    subCategoryId?: string;
 
   @IsString()
   @IsOptional()
-  childCategoryId?: string;
+    childCategoryId?: string;
 
   @IsString()
   @IsOptional()
-  brandId?: string;
+    brandId?: string;
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  tags?: string[];
+    tags?: string[];
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  collections?: string[];
+    collections?: string[];
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductImageDto)
   @IsOptional()
-  images?: ProductImageDto[];
+    images?: ProductImageDto[];
 
   @ValidateNested()
   @Type(() => ProductPricingDto)
   @IsOptional()
-  pricing?: Partial<ProductPricingDto>;
+    pricing?: Partial<ProductPricingDto>;
 
   @ValidateNested()
   @Type(() => ProductInventoryDto)
   @IsOptional()
-  inventory?: Partial<ProductInventoryDto>;
+    inventory?: Partial<ProductInventoryDto>;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductAttributeValueDto)
   @IsOptional()
-  selectedAttributes?: ProductAttributeValueDto[];
+    selectedAttributes?: ProductAttributeValueDto[];
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductVariantDto)
   @IsOptional()
-  variants?: ProductVariantDto[];
+    variants?: ProductVariantDto[];
 
   @ValidateNested()
   @Type(() => ProductShippingDto)
   @IsOptional()
-  shipping?: Partial<ProductShippingDto>;
+    shipping?: Partial<ProductShippingDto>;
 
   @ValidateNested()
   @Type(() => ProductSEODto)
   @IsOptional()
-  seo?: Partial<ProductSEODto>;
+    seo?: Partial<ProductSEODto>;
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  crossSellIds?: string[];
+    crossSellIds?: string[];
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  upsellIds?: string[];
+    upsellIds?: string[];
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  frequentlyBoughtIds?: string[];
+    frequentlyBoughtIds?: string[];
 
   @IsEnum(ProductStatus)
   @IsOptional()
-  status?: ProductStatus;
+    status?: ProductStatus;
 
   @IsEnum(ProductPublishState)
   @IsOptional()
-  publishState?: ProductPublishState;
+    publishState?: ProductPublishState;
 
   @IsString()
   @IsOptional()
-  scheduledAt?: string;
+    scheduledAt?: string;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
-  sortOrder?: number;
+    sortOrder?: number;
 }
 
 // ─── List Query ───────────────────────────────────────────────────────────────
@@ -518,84 +517,84 @@ export class UpdateProductDto {
 export class ProductListQueryDto {
   @IsString()
   @IsOptional()
-  search?: string;
+    search?: string;
 
   @IsString()
   @IsOptional()
-  categoryId?: string;
+    categoryId?: string;
 
   @IsString()
   @IsOptional()
-  subCategoryId?: string;
+    subCategoryId?: string;
 
   @IsString()
   @IsOptional()
-  brandId?: string;
+    brandId?: string;
 
   @IsEnum(ProductStatus)
   @IsOptional()
-  status?: ProductStatus;
+    status?: ProductStatus;
 
   @IsEnum(ProductPublishState)
   @IsOptional()
-  publishState?: ProductPublishState;
+    publishState?: ProductPublishState;
 
   @IsEnum(ProductType)
   @IsOptional()
-  productType?: ProductType;
+    productType?: ProductType;
 
   @IsString()
   @IsOptional()
-  collection?: string;
+    collection?: string;
 
   @IsBoolean()
   @IsOptional()
-  isFeatured?: boolean;
+    isFeatured?: boolean;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
   @Type(() => Number)
-  priceFrom?: number;
+    priceFrom?: number;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
   @Type(() => Number)
-  priceTo?: number;
+    priceTo?: number;
 
   /** "in_stock" | "out_of_stock" | "low_stock" */
   @IsString()
   @IsOptional()
-  stockStatus?: string;
+    stockStatus?: string;
 
   @IsString()
   @IsOptional()
-  dateFrom?: string;
+    dateFrom?: string;
 
   @IsString()
   @IsOptional()
-  dateTo?: string;
+    dateTo?: string;
 
   @IsString()
   @IsOptional()
-  sortBy?: string;
+    sortBy?: string;
 
   @IsIn(["ASC", "DESC", "asc", "desc"])
   @IsOptional()
-  sortOrder?: string;
+    sortOrder?: string;
 
   @IsNumber()
   @Min(0)
   @IsOptional()
   @Type(() => Number)
-  page?: number;
+    page?: number;
 
   @IsNumber()
   @Min(1)
   @IsOptional()
   @Type(() => Number)
-  limit?: number;
+    limit?: number;
 }
 
 // ─── Status Change ────────────────────────────────────────────────────────────
@@ -603,11 +602,11 @@ export class ProductListQueryDto {
 export class ChangeProductStatusDto {
   @IsEnum(ProductPublishState)
   @IsOptional()
-  publishState?: ProductPublishState;
+    publishState?: ProductPublishState;
 
   @IsEnum(ProductStatus)
   @IsOptional()
-  status?: ProductStatus;
+    status?: ProductStatus;
 }
 
 // ─── Bulk Operations ──────────────────────────────────────────────────────────
@@ -617,29 +616,29 @@ export class BulkDeleteProductDto {
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
   @ArrayMinSize(1)
-  ids!: string[];
+    ids!: string[];
 }
 
 export class BulkStatusProductDto {
   @IsArray()
   @IsString({ each: true })
   @ArrayMinSize(1)
-  ids!: string[];
+    ids!: string[];
 
   @IsEnum(ProductPublishState)
   @IsOptional()
-  publishState?: ProductPublishState;
+    publishState?: ProductPublishState;
 
   @IsEnum(ProductStatus)
   @IsOptional()
-  status?: ProductStatus;
+    status?: ProductStatus;
 }
 
 export class BulkPriceUpdateDto {
   @IsArray()
   @IsString({ each: true })
   @ArrayMinSize(1)
-  ids!: string[];
+    ids!: string[];
 
   /**
    * Flat amount to adjust (positive = increase, negative = decrease)
@@ -647,7 +646,7 @@ export class BulkPriceUpdateDto {
    */
   @IsNumber()
   @IsOptional()
-  flatAdjustment?: number;
+    flatAdjustment?: number;
 
   /**
    * Percentage to adjust (e.g. 10 = +10%, -5 = -5%)
@@ -655,26 +654,26 @@ export class BulkPriceUpdateDto {
    */
   @IsNumber()
   @IsOptional()
-  percentAdjustment?: number;
+    percentAdjustment?: number;
 
   /** Which price field to update: "sellingPrice" | "mrp" | "offerPrice" */
   @IsIn(["sellingPrice", "mrp", "offerPrice"])
   @IsOptional()
-  field?: string;
+    field?: string;
 }
 
 export class BulkStockUpdateDto {
   @IsArray()
   @IsString({ each: true })
   @ArrayMinSize(1)
-  ids!: string[];
+    ids!: string[];
 
   /**
    * Delta to add to current stock (positive = add, negative = subtract).
    * The service enforces stock cannot go below 0.
    */
   @IsNumber()
-  stockDelta!: number;
+    stockDelta!: number;
 }
 
 export class ProductImportItemDto extends CreateProductDto {}
@@ -684,5 +683,5 @@ export class ProductImportDto {
   @ValidateNested({ each: true })
   @Type(() => ProductImportItemDto)
   @ArrayMinSize(1)
-  products!: ProductImportItemDto[];
+    products!: ProductImportItemDto[];
 }

@@ -10,10 +10,9 @@ import {
   HttpCode,
   UseBefore,
   Patch,
-  Req,
-  Res
+  Req
 } from "routing-controllers";
-import { Request, Response } from "express";
+import { Request } from "express";
 import { StatusCodes } from "http-status-codes";
 import {
   CreateProductDto,
