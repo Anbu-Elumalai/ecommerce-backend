@@ -32,8 +32,6 @@ import { ProductRepository } from "../repository/product.repository";
 
 // ─── Internal helpers ─────────────────────────────────────────────────────────
 
-const toObjectId = (id: string) => new ObjectId(id);
-
 const ALLOWED_SORT_FIELDS: Record<string, string> = {
   name: "name",
   price: "pricing.sellingPrice",
@@ -384,7 +382,9 @@ export class ProductService {
     if (dto.sortOrder        !== undefined) product.sortOrder        = dto.sortOrder;
     if (dto.status           !== undefined) product.status           = dto.status;
     if (dto.publishState     !== undefined) product.publishState     = dto.publishState;
-    if (dto.scheduledAt      !== undefined) product.scheduledAt      = new Date(dto.scheduledAt);
+    if (dto.scheduledAt      !== undefined) {
+      product.scheduledAt = dto.scheduledAt ? new Date(dto.scheduledAt) : undefined;
+    }
     if (dto.crossSellIds     !== undefined) product.crossSellIds     = dto.crossSellIds;
     if (dto.upsellIds        !== undefined) product.upsellIds        = dto.upsellIds;
     if (dto.frequentlyBoughtIds !== undefined) product.frequentlyBoughtIds = dto.frequentlyBoughtIds;

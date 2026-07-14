@@ -1,4 +1,4 @@
-import { JsonController, Get, Post, Req, Res, BadRequestError, HttpCode, QueryParam, UseBefore } from "routing-controllers";
+import { JsonController, Get, Post, Delete, Req, Res, BadRequestError, HttpCode, QueryParam, UseBefore } from "routing-controllers";
 import imageService from "../../../utils/upload";
 import path from "path";
 import fs from "fs";
@@ -64,7 +64,7 @@ export class AdminMediaController {
         if (success) {
           uploadedData.push({
             fileName: fileName,
-            url: `/${targetFolder}/${fileName}`,
+            url: `/public/${targetFolder}/${fileName}`,
             size: file.size,
             mimetype: file.mimetype
           });
@@ -119,6 +119,58 @@ export class AdminMediaController {
       return res.status(StatusCodes.OK).json({
         success: true,
         data: data
+      });
+    } catch (error: any) {
+      return handleErrorResponse(error, res);
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/media:
+   *   delete:
+   *     summary: Delete an uploaded media file
+   *     tags: [Media]
+   *     parameters:
+   *       - in: query
+   *         name: folder
+   *         schema:
+   *           type: string
+   *         description: The subfolder containing the file (e.g. products, banners, general)
+   *       - in: query
+   *         name: fileName
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The name of the file to delete
+   *     responses:
+   *       200:
+   *         description: File deleted successfully
+   *       400:
+   *         description: Invalid input or failure to delete
+   */
+  @Delete("/")
+  @HttpCode(StatusCodes.OK)
+  async deleteMedia(
+    @QueryParam("folder") folder: string,
+    @QueryParam("fileName") fileName: string,
+    @Res() res: any
+  ) {
+    try {
+      if (!fileName) {
+        throw new BadRequestError("fileName query parameter is required.");
+      }
+
+      const targetFolder = folder || "general";
+      const success = await imageService.deleteImage(targetFolder, fileName);
+
+      if (!success) {
+        throw new BadRequestError("Failed to delete media or file not found.");
+      }
+
+      return res.status(StatusCodes.OK).json({
+        success: true,
+        message: "Media deleted successfully"
       });
     } catch (error: any) {
       return handleErrorResponse(error, res);

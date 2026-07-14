@@ -312,6 +312,207 @@ export const swaggerSpec = {
         }
       },
 
+      // ── Product ───────────────────────────────────────────────
+      ProductImage: {
+        type: "object",
+        required: ["url"],
+        properties: {
+          id: { type: "string" },
+          url: { type: "string", example: "https://example.com/images/product.jpg" },
+          thumbnailUrl: { type: "string" },
+          altText: { type: "string" },
+          isPrimary: { type: "boolean", default: false },
+          sortOrder: { type: "integer", default: 0 }
+        }
+      },
+      ProductPricing: {
+        type: "object",
+        required: ["mrp", "sellingPrice"],
+        properties: {
+          mrp: { type: "number", minimum: 0, example: 5999 },
+          sellingPrice: { type: "number", minimum: 0, example: 4499 },
+          costPrice: { type: "number", minimum: 0, example: 2500 },
+          offerPrice: { type: "number", minimum: 0, example: 3999 },
+          taxRate: { type: "number", minimum: 0, maximum: 100, example: 18 },
+          hsnCode: { type: "string", example: "8518300000" },
+          currency: { type: "string", example: "INR" }
+        }
+      },
+      ProductInventory: {
+        type: "object",
+        properties: {
+          trackInventory: { type: "boolean", default: true },
+          stockQty: { type: "number", minimum: 0, example: 150 },
+          lowStockAlert: { type: "number", minimum: 0, example: 10 },
+          allowBackOrders: { type: "boolean", default: false },
+          minOrderQty: { type: "number", minimum: 1, example: 1 },
+          maxOrderQty: { type: "number", minimum: 1, example: 5 },
+          shelfLife: { type: "string", example: "2 years" },
+          expiryDate: { type: "string", example: "2027-12-31" }
+        }
+      },
+      ProductShipping: {
+        type: "object",
+        properties: {
+          weight: { type: "number", minimum: 0, example: 0.35 },
+          length: { type: "number", minimum: 0, example: 20 },
+          width: { type: "number", minimum: 0, example: 18 },
+          height: { type: "number", minimum: 0, example: 10 },
+          shippingClass: { type: "string", enum: ["standard", "express", "fragile", "bulky"], example: "standard" },
+          deliveryDays: { type: "number", minimum: 1, example: 3 },
+          isFragile: { type: "boolean", default: false },
+          isTemperatureControlled: { type: "boolean", default: false }
+        }
+      },
+      ProductSEO: {
+        type: "object",
+        properties: {
+          metaTitle: { type: "string", maxLength: 60, example: "Buy Product Online" },
+          metaDescription: { type: "string", maxLength: 160 },
+          metaKeywords: { type: "array", items: { type: "string" } },
+          canonicalUrl: { type: "string" }
+        }
+      },
+      ProductAttributeValue: {
+        type: "object",
+        required: ["attributeId", "attributeName", "values"],
+        properties: {
+          attributeId: { type: "string", example: "<attribute_object_id>" },
+          attributeName: { type: "string", example: "Color" },
+          values: { type: "array", items: { type: "string" }, example: ["Black", "White"] }
+        }
+      },
+      ProductVariant: {
+        type: "object",
+        required: ["combination", "sku", "mrp", "sellingPrice"],
+        properties: {
+          id: { type: "string" },
+          combination: { type: "object", additionalProperties: { type: "string" }, example: { Color: "Black" } },
+          sku: { type: "string", example: "SKU-WH-001-BLK" },
+          barcode: { type: "string" },
+          mrp: { type: "number", minimum: 0, example: 5999 },
+          sellingPrice: { type: "number", minimum: 0, example: 4499 },
+          costPrice: { type: "number", minimum: 0 },
+          stockQty: { type: "number", minimum: 0 },
+          status: { type: "string", enum: ["active", "inactive"], default: "active" },
+          imageUrl: { type: "string" },
+          weight: { type: "number", minimum: 0 }
+        }
+      },
+      CreateProduct: {
+        type: "object",
+        required: ["name", "categoryId", "pricing"],
+        properties: {
+          name: { type: "string", minLength: 3, maxLength: 200, example: "Premium Wireless Headphones" },
+          slug: { type: "string", example: "premium-wireless-headphones" },
+          shortDescription: { type: "string", maxLength: 300, example: "Crystal clear audio with 40hrs battery life" },
+          description: { type: "string", example: "<p>Full HTML description...</p>" },
+          productType: { type: "string", enum: ["simple", "variable", "digital", "service"], default: "simple" },
+          sku: { type: "string", example: "SKU-WH-001" },
+          barcode: { type: "string", example: "123456789012" },
+          categoryId: { type: "string", example: "<category_object_id>" },
+          subCategoryId: { type: "string", example: "<subcategory_object_id>" },
+          childCategoryId: { type: "string" },
+          brandId: { type: "string", example: "<brand_object_id>" },
+          tags: { type: "array", items: { type: "string" }, example: ["wireless", "audio"] },
+          collections: { type: "array", items: { type: "string" }, example: ["best-sellers"] },
+          images: { type: "array", items: { $ref: "#/components/schemas/ProductImage" } },
+          pricing: { $ref: "#/components/schemas/ProductPricing" },
+          inventory: { $ref: "#/components/schemas/ProductInventory" },
+          selectedAttributes: { type: "array", items: { $ref: "#/components/schemas/ProductAttributeValue" } },
+          variants: { type: "array", items: { $ref: "#/components/schemas/ProductVariant" } },
+          shipping: { $ref: "#/components/schemas/ProductShipping" },
+          seo: { $ref: "#/components/schemas/ProductSEO" },
+          crossSellIds: { type: "array", items: { type: "string" } },
+          upsellIds: { type: "array", items: { type: "string" } },
+          frequentlyBoughtIds: { type: "array", items: { type: "string" } },
+          status: { type: "string", enum: ["active", "inactive"], default: "active" },
+          publishState: { type: "string", enum: ["draft", "published", "scheduled", "archived"], default: "draft" },
+          scheduledAt: { type: "string", example: "2026-07-15T00:00:00.000Z" },
+          sortOrder: { type: "integer", minimum: 0, default: 0 }
+        }
+      },
+      UpdateProduct: {
+        type: "object",
+        properties: {
+          name: { type: "string", minLength: 3, maxLength: 200 },
+          slug: { type: "string" },
+          shortDescription: { type: "string", maxLength: 300 },
+          description: { type: "string" },
+          productType: { type: "string", enum: ["simple", "variable", "digital", "service"] },
+          sku: { type: "string" },
+          barcode: { type: "string" },
+          categoryId: { type: "string" },
+          subCategoryId: { type: "string" },
+          childCategoryId: { type: "string" },
+          brandId: { type: "string" },
+          tags: { type: "array", items: { type: "string" } },
+          collections: { type: "array", items: { type: "string" } },
+          images: { type: "array", items: { $ref: "#/components/schemas/ProductImage" } },
+          pricing: { $ref: "#/components/schemas/ProductPricing" },
+          inventory: { $ref: "#/components/schemas/ProductInventory" },
+          selectedAttributes: { type: "array", items: { $ref: "#/components/schemas/ProductAttributeValue" } },
+          variants: { type: "array", items: { $ref: "#/components/schemas/ProductVariant" } },
+          shipping: { $ref: "#/components/schemas/ProductShipping" },
+          seo: { $ref: "#/components/schemas/ProductSEO" },
+          crossSellIds: { type: "array", items: { type: "string" } },
+          upsellIds: { type: "array", items: { type: "string" } },
+          frequentlyBoughtIds: { type: "array", items: { type: "string" } },
+          status: { type: "string", enum: ["active", "inactive"] },
+          publishState: { type: "string", enum: ["draft", "published", "scheduled", "archived"] },
+          scheduledAt: { type: "string" },
+          sortOrder: { type: "integer", minimum: 0 }
+        }
+      },
+      ChangeProductStatus: {
+        type: "object",
+        properties: {
+          publishState: { type: "string", enum: ["draft", "published", "scheduled", "archived"] },
+          status: { type: "string", enum: ["active", "inactive"] }
+        }
+      },
+      BulkDeleteProduct: {
+        type: "object",
+        required: ["ids"],
+        properties: {
+          ids: { type: "array", items: { type: "string" }, minItems: 1, example: ["<id1>", "<id2>"] }
+        }
+      },
+      BulkStatusProduct: {
+        type: "object",
+        required: ["ids"],
+        properties: {
+          ids: { type: "array", items: { type: "string" }, minItems: 1 },
+          publishState: { type: "string", enum: ["draft", "published", "scheduled", "archived"] },
+          status: { type: "string", enum: ["active", "inactive"] }
+        }
+      },
+      BulkPriceUpdate: {
+        type: "object",
+        required: ["ids"],
+        properties: {
+          ids: { type: "array", items: { type: "string" }, minItems: 1 },
+          flatAdjustment: { type: "number", description: "Flat amount to add/subtract (mutually exclusive with percentAdjustment)", example: 50 },
+          percentAdjustment: { type: "number", description: "Percentage to add/subtract e.g. 10 = +10%, -5 = -5%", example: -10 },
+          field: { type: "string", enum: ["sellingPrice", "mrp", "offerPrice"], default: "sellingPrice" }
+        }
+      },
+      BulkStockUpdate: {
+        type: "object",
+        required: ["ids", "stockDelta"],
+        properties: {
+          ids: { type: "array", items: { type: "string" }, minItems: 1 },
+          stockDelta: { type: "number", description: "Delta to add to current stock (positive = add, negative = subtract)", example: 100 }
+        }
+      },
+      ProductImport: {
+        type: "object",
+        required: ["products"],
+        properties: {
+          products: { type: "array", items: { $ref: "#/components/schemas/CreateProduct" }, minItems: 1 }
+        }
+      },
+
       // ── Shared ────────────────────────────────────────────────
       PaginatedResponse: {
         type: "object",
@@ -341,6 +542,44 @@ export const swaggerSpec = {
           statusCode: { type: "integer" },
           message: { type: "string" },
           errors: {}
+        }
+      },
+      UploadedMedia: {
+        type: "object",
+        properties: {
+          fileName: { type: "string", example: "media-1719830100-abcde.jpg" },
+          url: { type: "string", example: "/general/media-1719830100-abcde.jpg" },
+          size: { type: "integer", example: 1048576 },
+          mimetype: { type: "string", example: "image/jpeg" }
+        }
+      },
+      MediaUploadResponse: {
+        type: "object",
+        properties: {
+          success: { type: "boolean", example: true },
+          message: { type: "string", example: "1 files uploaded successfully" },
+          data: {
+            type: "array",
+            items: {
+              $ref: "#/components/schemas/UploadedMedia"
+            }
+          }
+        }
+      },
+      MediaListResponse: {
+        type: "object",
+        properties: {
+          success: { type: "boolean", example: true },
+          data: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                fileName: { type: "string", example: "media-1719830100-abcde.jpg" },
+                url: { type: "string", example: "/general/media-1719830100-abcde.jpg" }
+              }
+            }
+          }
         }
       }
     }
@@ -801,6 +1040,368 @@ export const swaggerSpec = {
     },
 
     // =====================================================================
+    // PRODUCTS
+    // =====================================================================
+    "/api/products": {
+      post: {
+        tags: ["Products"],
+        summary: "Create a new product",
+        description: "Creates a product. Only `name`, `categoryId`, and `pricing` (mrp + sellingPrice) are required. Slug and SKU are auto-generated if omitted.",
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/CreateProduct" } } }
+        },
+        responses: {
+          "201": { description: "Product created successfully", content: { "application/json": { schema: { $ref: "#/components/schemas/SuccessResponse" } } } },
+          "400": { description: "Validation error" },
+          "401": { description: "Unauthorized" },
+          "409": { description: "Duplicate SKU or slug" }
+        }
+      },
+      get: {
+        tags: ["Products"],
+        summary: "List products (paginated + filtered)",
+        parameters: [
+          { name: "page", in: "query", schema: { type: "integer", default: 0 }, description: "Page index (0-based)" },
+          { name: "limit", in: "query", schema: { type: "integer", default: 10 } },
+          { name: "search", in: "query", schema: { type: "string" }, description: "Search by name, SKU, barcode, slug, description" },
+          { name: "categoryId", in: "query", schema: { type: "string" } },
+          { name: "brandId", in: "query", schema: { type: "string" } },
+          { name: "status", in: "query", schema: { type: "string", enum: ["active", "inactive"] } },
+          { name: "publishState", in: "query", schema: { type: "string", enum: ["draft", "published", "scheduled", "archived"] } },
+          { name: "productType", in: "query", schema: { type: "string", enum: ["simple", "variable", "digital", "service"] } },
+          { name: "priceFrom", in: "query", schema: { type: "number" } },
+          { name: "priceTo", in: "query", schema: { type: "number" } },
+          { name: "stockStatus", in: "query", schema: { type: "string", enum: ["in_stock", "out_of_stock", "low_stock"] } },
+          { name: "sortBy", in: "query", schema: { type: "string", default: "createdAt" } },
+          { name: "sortOrder", in: "query", schema: { type: "string", enum: ["ASC", "DESC"], default: "DESC" } }
+        ],
+        responses: {
+          "200": { description: "Paginated product list", content: { "application/json": { schema: { $ref: "#/components/schemas/PaginatedResponse" } } } },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/export": {
+      get: {
+        tags: ["Products"],
+        summary: "Export all matching products",
+        description: "Returns the full (unpaginated) product list for CSV/Excel export. Accepts the same filters as the list endpoint.",
+        parameters: [
+          { name: "search", in: "query", schema: { type: "string" } },
+          { name: "categoryId", in: "query", schema: { type: "string" } },
+          { name: "brandId", in: "query", schema: { type: "string" } },
+          { name: "status", in: "query", schema: { type: "string", enum: ["active", "inactive"] } },
+          { name: "publishState", in: "query", schema: { type: "string", enum: ["draft", "published", "scheduled", "archived"] } },
+          { name: "stockStatus", in: "query", schema: { type: "string", enum: ["in_stock", "out_of_stock", "low_stock"] } }
+        ],
+        responses: {
+          "200": { description: "Full product list for export", content: { "application/json": { schema: { $ref: "#/components/schemas/SuccessResponse" } } } },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/import": {
+      post: {
+        tags: ["Products"],
+        summary: "Batch import products",
+        description: "Import multiple products in one request. Returns per-row success/failure details.",
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/ProductImport" } } }
+        },
+        responses: {
+          "201": { description: "Import complete (all succeeded)", content: { "application/json": { schema: { $ref: "#/components/schemas/SuccessResponse" } } } },
+          "207": { description: "Partial success — some rows failed" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/bulk-delete": {
+      post: {
+        tags: ["Products"],
+        summary: "Soft-delete multiple products",
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/BulkDeleteProduct" } } }
+        },
+        responses: {
+          "200": { description: "Products soft-deleted" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/bulk-status": {
+      post: {
+        tags: ["Products"],
+        summary: "Change publish state / visibility for multiple products",
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/BulkStatusProduct" } } }
+        },
+        responses: {
+          "200": { description: "Products status updated" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/bulk-price": {
+      post: {
+        tags: ["Products"],
+        summary: "Bulk price adjustment for multiple products",
+        description: "Use `flatAdjustment` for a fixed ±amount or `percentAdjustment` for a percentage change. These are mutually exclusive.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/BulkPriceUpdate" },
+              examples: {
+                flatIncrease: { summary: "Flat +50 on sellingPrice", value: { ids: ["<id1>"], flatAdjustment: 50, field: "sellingPrice" } },
+                percentDiscount: { summary: "-10% on sellingPrice", value: { ids: ["<id1>"], percentAdjustment: -10, field: "sellingPrice" } }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": { description: "Prices updated" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/bulk-stock": {
+      post: {
+        tags: ["Products"],
+        summary: "Bulk stock adjustment for multiple products",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/BulkStockUpdate" },
+              examples: {
+                addStock: { summary: "Add 100 units", value: { ids: ["<id1>"], stockDelta: 100 } },
+                deductStock: { summary: "Deduct 20 units", value: { ids: ["<id1>"], stockDelta: -20 } }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": { description: "Stock updated" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/{id}": {
+      get: {
+        tags: ["Products"],
+        summary: "Get full product details by ID",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          "200": { description: "Full product with brand, category, attributes, variants, inventory, SEO", content: { "application/json": { schema: { $ref: "#/components/schemas/SuccessResponse" } } } },
+          "404": { description: "Product not found" },
+          "401": { description: "Unauthorized" }
+        }
+      },
+      put: {
+        tags: ["Products"],
+        summary: "Update a product (supports partial update)",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/UpdateProduct" } } }
+        },
+        responses: {
+          "200": { description: "Product updated successfully" },
+          "404": { description: "Product not found" },
+          "401": { description: "Unauthorized" }
+        }
+      },
+      delete: {
+        tags: ["Products"],
+        summary: "Soft-delete a product",
+        description: "Sets isDeleted=true. The product is never permanently removed.",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          "200": { description: "Product deleted" },
+          "404": { description: "Product not found" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/{id}/restore": {
+      patch: {
+        tags: ["Products"],
+        summary: "Restore a soft-deleted product",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          "200": { description: "Product restored" },
+          "404": { description: "Product not found" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/{id}/status": {
+      patch: {
+        tags: ["Products"],
+        summary: "Change product publish state or visibility status",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/ChangeProductStatus" },
+              examples: {
+                publish: { summary: "Publish product", value: { publishState: "published" } },
+                archive: { summary: "Archive product", value: { publishState: "archived" } },
+                deactivate: { summary: "Deactivate product", value: { status: "inactive" } }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": { description: "Status updated" },
+          "404": { description: "Product not found" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/products/{id}/duplicate": {
+      post: {
+        tags: ["Products"],
+        summary: "Duplicate a product",
+        description: "Clones the product with a new auto-generated SKU, slug suffixed with `-copy-{timestamp}`, publishState=draft, status=inactive, and analytics reset to 0.",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          "201": { description: "Product duplicated", content: { "application/json": { schema: { $ref: "#/components/schemas/SuccessResponse" } } } },
+          "404": { description: "Product not found" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    // =====================================================================
+    // MEDIA
+    // =====================================================================
+    "/api/media/upload": {
+      post: {
+        tags: ["Media"],
+        summary: "Upload multiple files (Images/Documents/Videos)",
+        description: "Uploads files to the server. File key in the form data must be `files`. Can upload multiple files.",
+        parameters: [
+          {
+            name: "folder",
+            in: "query",
+            schema: { type: "string", default: "general" },
+            description: "Target subfolder under public/ (e.g. products, brands, categories, general)"
+          }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "multipart/form-data": {
+              schema: {
+                type: "object",
+                properties: {
+                  files: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                      format: "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Files uploaded successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/MediaUploadResponse" }
+              }
+            }
+          },
+          "400": { description: "Invalid input or limit exceeded" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    "/api/media": {
+      get: {
+        tags: ["Media"],
+        summary: "Get list of uploaded media files in a folder",
+        parameters: [
+          {
+            name: "folder",
+            in: "query",
+            schema: { type: "string", default: "general" },
+            description: "Subfolder name under public/"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "Files listed successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/MediaListResponse" }
+              }
+            }
+          },
+          "401": { description: "Unauthorized" }
+        }
+      },
+      delete: {
+        tags: ["Media"],
+        summary: "Delete an uploaded media file",
+        parameters: [
+          {
+            name: "folder",
+            in: "query",
+            schema: { type: "string", default: "general" },
+            description: "The subfolder containing the file (e.g. products, banners, general)"
+          },
+          {
+            name: "fileName",
+            in: "query",
+            required: true,
+            schema: { type: "string" },
+            description: "The name of the file to delete"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "File deleted successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: true },
+                    message: { type: "string", example: "Media deleted successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { description: "Invalid input or failure to delete" },
+          "401": { description: "Unauthorized" }
+        }
+      }
+    },
+
+    // =====================================================================
     // HEALTH
     // =====================================================================
     "/api/health": {
@@ -824,6 +1425,8 @@ export const swaggerSpec = {
     { name: "Categories", description: "Product category hierarchy management" },
     { name: "Attributes", description: "Product attribute and variant option management" },
     { name: "Admin Users", description: "Admin user account management" },
+    { name: "Products", description: "Product catalogue management — create, update, variants, inventory, SEO, bulk operations" },
+    { name: "Media", description: "Media files upload and folder listing management" },
     { name: "System", description: "System health and diagnostics" }
   ]
 };

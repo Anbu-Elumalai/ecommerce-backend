@@ -56,6 +56,15 @@ export class ProductImage {
 
   @Column({ default: 0 })
     sortOrder!: number;
+
+  @Column({ nullable: true })
+    fileName?: string;
+
+  @Column({ nullable: true })
+    size?: number;
+
+  @Column({ nullable: true })
+    mimetype?: string;
 }
 
 export class ProductPricing {

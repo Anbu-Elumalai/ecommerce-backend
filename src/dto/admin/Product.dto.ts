@@ -43,6 +43,18 @@ export class ProductImageDto {
   @IsNumber()
   @IsOptional()
     sortOrder?: number;
+
+  @IsString()
+  @IsOptional()
+    fileName?: string;
+
+  @IsNumber()
+  @IsOptional()
+    size?: number;
+
+  @IsString()
+  @IsOptional()
+    mimetype?: string;
 }
 
 export class ProductPricingDto {
