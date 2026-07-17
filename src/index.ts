@@ -35,13 +35,11 @@ AppDataSource.initialize()
       })
     );
 
-    // Secure File uploads: use temp files to avoid memory exhaustion (DoS)
+    // File uploads: keep files in-memory so file.data buffer is always populated
     app.use(
       fileUpload({
-        limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
-        abortOnLimit: true,
-        useTempFiles: true,
-        tempFileDir: "/tmp/"
+        limits: { fileSize: 20 * 1024 * 1024 }, // 20MB — matches controller limit
+        abortOnLimit: true
       })
     );
 

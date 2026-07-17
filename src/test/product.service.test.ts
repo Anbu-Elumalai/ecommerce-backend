@@ -40,7 +40,7 @@ function makeProduct(overrides: Partial<Product> = {}): Product {
   p.name = "Test Product";
   p.slug = "test-product";
   p.sku = "TP-001";
-  p.categoryId = new ObjectId().toString();
+  p.categoryId = new ObjectId();
   p.pricing = { mrp: 5999, sellingPrice: 4499, currency: "INR" } as any;
   p.inventory = { trackInventory: true, stockQty: 100, allowBackOrders: false } as any;
   p.status = ProductStatus.ACTIVE;
@@ -289,7 +289,7 @@ describe("ProductService — Unit Tests", () => {
 
     it("should set createdBy to the provided userId", async () => {
       const dto = makeCreateDto();
-      const product = makeProduct({ createdBy: userId });
+      const product = makeProduct({ createdBy: new ObjectId(userId) });
 
       mockRepo.findBySlug.mockResolvedValue(null);
       mockRepo.findBySku.mockResolvedValue(null);
@@ -297,7 +297,7 @@ describe("ProductService — Unit Tests", () => {
       mockRepo.save.mockResolvedValue(product);
 
       const result = await service.create(dto, userId);
-      expect(result.createdBy).toBe(userId);
+      expect(result.createdBy?.toString()).toBe(userId);
     });
 
     it("should default publishState to DRAFT when not provided", async () => {
@@ -548,7 +548,7 @@ describe("ProductService — Unit Tests", () => {
 
       await service.update(product._id.toString(), { tags: ["sale"] }, userId);
 
-      expect(product.updatedBy).toBe(userId);
+      expect(product.updatedBy?.toString()).toBe(userId);
     });
 
     it("should throw NotFoundError when product to update does not exist", async () => {
@@ -573,8 +573,8 @@ describe("ProductService — Unit Tests", () => {
       await service.softDelete(product._id.toString(), userId);
 
       expect(product.isDeleted).toBe(true);
-      expect(product.deletedBy).toBe(userId);
-      expect(product.updatedBy).toBe(userId);
+      expect(product.deletedBy?.toString()).toBe(userId);
+      expect(product.updatedBy?.toString()).toBe(userId);
       expect(product.deletedAt).toBeInstanceOf(Date);
       expect(mockRepo.save).toHaveBeenCalledWith(product);
     });
@@ -594,7 +594,7 @@ describe("ProductService — Unit Tests", () => {
 
   describe("restore()", () => {
     it("should restore a soft-deleted product and clear deletion fields", async () => {
-      const product = makeProduct({ isDeleted: true, deletedBy: userId });
+      const product = makeProduct({ isDeleted: true, deletedBy: new ObjectId(userId) });
       mockRepo.findByIdIncludeDeleted.mockResolvedValue(product);
       mockRepo.save.mockImplementation(async (p: any) => p);
 
@@ -603,7 +603,7 @@ describe("ProductService — Unit Tests", () => {
       expect(product.isDeleted).toBe(false);
       expect(product.deletedAt).toBeUndefined();
       expect(product.deletedBy).toBeUndefined();
-      expect(product.updatedBy).toBe(userId);
+      expect(product.updatedBy?.toString()).toBe(userId);
     });
 
     it("should throw NotFoundError when product does not exist at all", async () => {

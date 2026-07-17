@@ -101,10 +101,10 @@ export class ProductService {
       shortDescription: dto.shortDescription,
       description: dto.description,
       productType: dto.productType || ProductType.SIMPLE,
-      categoryId: dto.categoryId,
-      subCategoryId: dto.subCategoryId,
-      childCategoryId: dto.childCategoryId,
-      brandId: dto.brandId,
+      categoryId: new ObjectId(dto.categoryId),
+      subCategoryId: dto.subCategoryId ? new ObjectId(dto.subCategoryId) : undefined,
+      childCategoryId: dto.childCategoryId ? new ObjectId(dto.childCategoryId) : undefined,
+      brandId: dto.brandId ? new ObjectId(dto.brandId) : undefined,
       tags: dto.tags || [],
       collections: dto.collections || [],
       images: this.normalizeImages(dto.images || []),
@@ -114,9 +114,9 @@ export class ProductService {
       variants,
       shipping: dto.shipping ? this.buildShipping(dto.shipping) : undefined,
       seo: dto.seo ? this.buildSEO(dto.seo) : undefined,
-      crossSellIds: dto.crossSellIds || [],
-      upsellIds: dto.upsellIds || [],
-      frequentlyBoughtIds: dto.frequentlyBoughtIds || [],
+      crossSellIds: (dto.crossSellIds || []).map((sid: string) => new ObjectId(sid)),
+      upsellIds: (dto.upsellIds || []).map((sid: string) => new ObjectId(sid)),
+      frequentlyBoughtIds: (dto.frequentlyBoughtIds || []).map((sid: string) => new ObjectId(sid)),
       status: dto.status || ProductStatus.ACTIVE,
       publishState: dto.publishState || ProductPublishState.DRAFT,
       scheduledAt: dto.scheduledAt ? new Date(dto.scheduledAt) : undefined,
@@ -125,7 +125,7 @@ export class ProductService {
       salesCount: 0,
       reviewCount: 0,
       isDeleted: false,
-      createdBy: userId
+      createdBy: new ObjectId(userId)
     }) as any;
 
     return this.productRepo.save(product as Product);
@@ -359,15 +359,15 @@ export class ProductService {
     }
 
     // Category change
-    if (dto.categoryId && dto.categoryId !== product.categoryId) {
+    if (dto.categoryId && dto.categoryId !== product.categoryId?.toString()) {
       await this.validateCategory(dto.categoryId);
-      product.categoryId = dto.categoryId;
+      product.categoryId = new ObjectId(dto.categoryId) as any;
     }
 
     // Brand change
-    if (dto.brandId !== undefined && dto.brandId !== product.brandId) {
+    if (dto.brandId !== undefined && dto.brandId !== product.brandId?.toString()) {
       if (dto.brandId) await this.validateBrand(dto.brandId);
-      product.brandId = dto.brandId;
+      product.brandId = dto.brandId ? new ObjectId(dto.brandId) as any : undefined;
     }
 
     // Scalar fields
@@ -375,8 +375,8 @@ export class ProductService {
     if (dto.description      !== undefined) product.description      = dto.description;
     if (dto.barcode          !== undefined) product.barcode          = dto.barcode;
     if (dto.productType      !== undefined) product.productType      = dto.productType;
-    if (dto.subCategoryId    !== undefined) product.subCategoryId    = dto.subCategoryId;
-    if (dto.childCategoryId  !== undefined) product.childCategoryId  = dto.childCategoryId;
+    if (dto.subCategoryId    !== undefined) product.subCategoryId    = dto.subCategoryId ? new ObjectId(dto.subCategoryId) as any : undefined;
+    if (dto.childCategoryId  !== undefined) product.childCategoryId  = dto.childCategoryId ? new ObjectId(dto.childCategoryId) as any : undefined;
     if (dto.tags             !== undefined) product.tags             = dto.tags;
     if (dto.collections      !== undefined) product.collections      = dto.collections;
     if (dto.sortOrder        !== undefined) product.sortOrder        = dto.sortOrder;
@@ -385,9 +385,9 @@ export class ProductService {
     if (dto.scheduledAt      !== undefined) {
       product.scheduledAt = dto.scheduledAt ? new Date(dto.scheduledAt) : undefined;
     }
-    if (dto.crossSellIds     !== undefined) product.crossSellIds     = dto.crossSellIds;
-    if (dto.upsellIds        !== undefined) product.upsellIds        = dto.upsellIds;
-    if (dto.frequentlyBoughtIds !== undefined) product.frequentlyBoughtIds = dto.frequentlyBoughtIds;
+    if (dto.crossSellIds        !== undefined) product.crossSellIds        = dto.crossSellIds.map((sid) => new ObjectId(sid)) as any[];
+    if (dto.upsellIds           !== undefined) product.upsellIds           = dto.upsellIds.map((sid) => new ObjectId(sid)) as any[];
+    if (dto.frequentlyBoughtIds !== undefined) product.frequentlyBoughtIds = dto.frequentlyBoughtIds.map((sid) => new ObjectId(sid)) as any[];
 
     // Images
     if (dto.images !== undefined) {
@@ -428,7 +428,7 @@ export class ProductService {
       );
     }
 
-    product.updatedBy = userId;
+    product.updatedBy = new ObjectId(userId) as any;
     return this.productRepo.save(product);
   }
 
@@ -440,8 +440,8 @@ export class ProductService {
     const product = await this.getById(id);
     product.isDeleted  = true;
     product.deletedAt  = new Date();
-    product.deletedBy  = userId;
-    product.updatedBy  = userId;
+    product.deletedBy  = new ObjectId(userId) as any;
+    product.updatedBy  = new ObjectId(userId) as any;
     await this.productRepo.save(product);
   }
 
@@ -457,7 +457,7 @@ export class ProductService {
     product.isDeleted  = false;
     product.deletedAt  = undefined;
     product.deletedBy  = undefined;
-    product.updatedBy  = userId;
+    product.updatedBy  = new ObjectId(userId) as any;
     return this.productRepo.save(product);
   }
 
@@ -469,7 +469,7 @@ export class ProductService {
     const product = await this.getById(id);
     if (dto.status       !== undefined) product.status       = dto.status;
     if (dto.publishState !== undefined) product.publishState = dto.publishState;
-    product.updatedBy = userId;
+    product.updatedBy = new ObjectId(userId) as any;
     return this.productRepo.save(product);
   }
 
@@ -516,7 +516,7 @@ export class ProductService {
       isDeleted: false,
       deletedAt: undefined,
       deletedBy: undefined,
-      createdBy: userId,
+      createdBy: new ObjectId(userId),
       updatedBy: undefined
     }) as any;
 
@@ -531,8 +531,8 @@ export class ProductService {
     const modified = await this.productRepo.bulkUpdate(ids, {
       isDeleted: true,
       deletedAt: new Date(),
-      deletedBy: userId,
-      updatedBy: userId
+      deletedBy: new ObjectId(userId),
+      updatedBy: new ObjectId(userId)
     });
     return { deleted: modified };
   }
@@ -547,7 +547,7 @@ export class ProductService {
     status: ProductStatus | undefined,
     userId: string
   ): Promise<{ updated: number }> {
-    const updatePayload: Record<string, any> = { updatedBy: userId };
+    const updatePayload: Record<string, any> = { updatedBy: new ObjectId(userId) };
     if (publishState) updatePayload.publishState = publishState;
     if (status)       updatePayload.status       = status;
 
@@ -596,7 +596,7 @@ export class ProductService {
         else if (field === "offerPrice") product.pricing.offerPrice   = newPrice;
         else                             product.pricing.sellingPrice  = newPrice;
 
-        product.updatedBy = userId;
+        product.updatedBy = new ObjectId(userId) as any;
         await this.productRepo.save(product);
         updated++;
       } catch {
@@ -624,7 +624,7 @@ export class ProductService {
       try {
         const newQty = Math.max(0, product.inventory.stockQty + stockDelta);
         product.inventory.stockQty = newQty;
-        product.updatedBy = userId;
+        product.updatedBy = new ObjectId(userId) as any;
         await this.productRepo.save(product);
         updated++;
       } catch {
@@ -726,7 +726,7 @@ export class ProductService {
       }
 
       resolved.push({
-        attributeId: sel.attributeId,
+        attributeId: new ObjectId(sel.attributeId) as any,
         attributeName: attr.name,
         values: sel.values
       });

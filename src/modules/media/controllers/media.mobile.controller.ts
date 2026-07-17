@@ -1,19 +1,17 @@
-import { JsonController, Get, Post, Req, Res, BadRequestError, HttpCode, QueryParam, UseBefore } from "routing-controllers";
+import { JsonController, Get, Post, Req, Res, BadRequestError, HttpCode, QueryParam } from "routing-controllers";
 import imageService from "../../../utils/upload";
 import path from "path";
 import { StatusCodes } from "http-status-codes";
 import handleErrorResponse from "../../../utils/commonFunction";
-import { AuthMiddleware } from "../../../middlewares/AuthMiddleware";
 
-@JsonController("/media")
-@UseBefore(AuthMiddleware)
-export class AdminMediaController {
+@JsonController("/mobile/media")
+export class MobileMediaController {
   /**
    * @swagger
-   * /api/media/upload:
+   * /api/mobile/media/upload:
    *   post:
    *     summary: Upload multiple files (Images/Documents)
-   *     tags: [Media]
+   *     tags: [Mobile Media]
    *     parameters:
    *       - in: query
    *         name: folder
@@ -80,10 +78,10 @@ export class AdminMediaController {
 
   /**
    * @swagger
-   * /api/media:
+   * /api/mobile/media:
    *   get:
    *     summary: Get a list of all uploaded media files
-   *     tags: [Media]
+   *     tags: [Mobile Media]
    *     responses:
    *       200:
    *         description: List of files retrieved successfully

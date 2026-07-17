@@ -171,7 +171,7 @@ export class ProductSEO {
 
 export class ProductAttributeValue {
   @Column()
-    attributeId!: string;
+    attributeId!: ObjectId;
 
   @Column()
     attributeName!: string;
@@ -267,16 +267,16 @@ export class Product {
   // ─── Categorisation ──────────────────────────────────────────────────────
 
   @Column()
-    categoryId!: string;
+    categoryId!: ObjectId;
 
   @Column({ nullable: true })
-    subCategoryId?: string;
+    subCategoryId?: ObjectId;
 
   @Column({ nullable: true })
-    childCategoryId?: string;
+    childCategoryId?: ObjectId;
 
   @Column({ nullable: true })
-    brandId?: string;
+    brandId?: ObjectId;
 
   @Column("simple-array", { nullable: true })
     tags?: string[];
@@ -322,13 +322,13 @@ export class Product {
   // ─── Related Products ────────────────────────────────────────────────────
 
   @Column("simple-array", { nullable: true })
-    crossSellIds?: string[];
+    crossSellIds?: ObjectId[];
 
   @Column("simple-array", { nullable: true })
-    upsellIds?: string[];
+    upsellIds?: ObjectId[];
 
   @Column("simple-array", { nullable: true })
-    frequentlyBoughtIds?: string[];
+    frequentlyBoughtIds?: ObjectId[];
 
   // ─── Publishing ──────────────────────────────────────────────────────────
 
@@ -369,13 +369,13 @@ export class Product {
   // ─── Audit ───────────────────────────────────────────────────────────────
 
   @Column({ nullable: true })
-    createdBy?: string;
+    createdBy?: ObjectId;
 
   @Column({ nullable: true })
-    updatedBy?: string;
+    updatedBy?: ObjectId;
 
   @Column({ nullable: true })
-    deletedBy?: string;
+    deletedBy?: ObjectId;
 
   @Column({ nullable: true })
     deletedAt?: Date;
